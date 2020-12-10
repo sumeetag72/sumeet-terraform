@@ -1,19 +1,24 @@
 variable "region" {
-  type        = string
+  type    = string
   default = "us-east-1"
 }
 
 variable "profile" {
-  type        = string
+  type    = string
   default = null
 }
 
 variable "environment" {
-  type        = string
+  type    = string
   default = null
 }
 
 variable "project" {
-  type        = string
+  type    = string
+  default = null
+}
+
+variable "register-component-lambda-name" {
+  type    = string
   default = null
 }

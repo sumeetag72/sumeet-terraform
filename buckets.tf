@@ -8,9 +8,9 @@ terraform {
 }
 
 locals {
-  docusaurus_bucket_name = format("%s.%s.test1", var.environment,var.project)
-  storybook_bucket_name = format("%s.%s.test2", var.environment,var.project)
-  finsemble_bucket_name = format("%s.%s.test", var.environment,var.project)
+  docusaurus_bucket_name = format("%s.%s.test1", var.environment, var.project)
+  storybook_bucket_name  = format("%s.%s.test2", var.environment, var.project)
+  finsemble_bucket_name  = format("%s.%s.test", var.environment, var.project)
 }
 
 provider "aws" {
@@ -31,7 +31,7 @@ resource "aws_s3_bucket" "finsemble" {
     Environment = "SeaHorse"
   }
 
-   website {
+  website {
     index_document = "index.html"
     error_document = "error.html"
   }
@@ -49,7 +49,7 @@ resource "aws_s3_bucket" "docusaurus" {
     Environment = "SeaHorse"
   }
 
-   website {
+  website {
     index_document = "index.html"
     error_document = "error.html"
   }
@@ -67,7 +67,7 @@ resource "aws_s3_bucket" "storybook" {
     Environment = "SeaHorse"
   }
 
-   website {
+  website {
     index_document = "index.html"
     error_document = "error.html"
   }
