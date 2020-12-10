@@ -44,7 +44,7 @@ resource "aws_lambda_function" "RegisterComponentLambda" {
 
   environment {
     variables = {
-      foo = "bar"
+      environment = var.environment
     }
   }
 }
