@@ -23,7 +23,12 @@ variable "project" {
   default = null
 }
 
-variable "register-component-lambda-name" {
+variable "register_component_lambda_name" {
+  type    = string
+  default = null
+}
+
+variable "dynamo_admin_table_name" {
   type    = string
   default = null
 }
