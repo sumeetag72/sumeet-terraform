@@ -10,11 +10,6 @@ resource "aws_dynamodb_table" "component-dynamodb-table" {
     type = "S"
   }
 
-  ttl {
-    attribute_name = "TimeToExist"
-    enabled        = false
-  }
-
   tags = {
     Environment = var.environment
   }

@@ -19,7 +19,7 @@ EOF
 
 resource "aws_iam_policy" "seahorse_admin_lambdas_exec_policy" {
   name = "seahorse_admin_lambdas_exec_policy"
-  policy = templatefile("policy/admin-lambda-policy.tpl", {
+  policy = templatefile("${path.module}/policy/admin-lambda-policy.tpl", {
     register_component_lambda_name = var.register-component-lambda-name
   })
 }
@@ -41,6 +41,10 @@ resource "aws_lambda_function" "RegisterComponentLambda" {
   handler       = "com.globallink.admin.fsbl.RegisterComponentService::handleRequest"
 
   runtime = "java8"
+  memory_size = "512"
+  timeout = "15"
+
+  publish = true
 
   environment {
     variables = {
