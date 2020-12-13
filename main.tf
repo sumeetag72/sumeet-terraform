@@ -41,6 +41,7 @@ module "admin-apis" {
 
   aws_account_id = var.aws_account_id
   region = var.region
-  admin-lambda-name = module.admin_lambdas.admin_lambda_name
+  admin_lambda_name = module.admin_lambdas.admin_lambda_name
+  get_components_lambda_name = var.get_components_lambda_name
 
 }
