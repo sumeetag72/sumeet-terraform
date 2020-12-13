@@ -7,3 +7,8 @@ variable "register-component-lambda-name" {
   type    = string
   default = null
 }
+
+variable "get-components-lambda-name" {
+  type    = string
+  default = null
+}

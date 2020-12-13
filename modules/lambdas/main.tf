@@ -52,3 +52,22 @@ resource "aws_lambda_function" "RegisterComponentLambda" {
     }
   }
 }
+
+resource "aws_lambda_function" "GetRegisteredComponents" {
+  filename      = "../seahorse-server/app.adminservices/target/adminservices-1.0.jar"
+  function_name = var.get-components-lambda-name
+  role          = aws_iam_role.seahorse_iam_role_for_admin_lambdas.arn
+  handler       = "com.globallink.admin.fsbl.GetComponentService::handleRequest"
+
+  runtime = "java8"
+  memory_size = "512"
+  timeout = "15"
+
+  publish = true
+
+  environment {
+    variables = {
+      environment = var.environment
+    }
+  }
+}

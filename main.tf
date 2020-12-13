@@ -31,6 +31,7 @@ module "admin_lambdas" {
   source = "./modules/lambdas"
 
   register-component-lambda-name = var.register_component_lambda_name
+  get-components-lambda-name = var.get_components_lambda_name
   environment = var.environment
 
 }
