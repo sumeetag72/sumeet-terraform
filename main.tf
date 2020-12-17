@@ -49,5 +49,7 @@ module "admin-api" {
 module "auth" {
   source = "./modules/auth"
   environment = var.environment
-
+  idp-name = var.idp-name
+  user-pool-client-redirect-urls = var.user-pool-client-redirect-urls
+  user-pool-client-logout-urls = var.user-pool-client-logout-urls
 }

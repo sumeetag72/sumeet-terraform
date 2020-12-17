@@ -1,0 +1,11 @@
+aws_account_id="276164198880"
+region                         = "us-east-1"
+profile                        = "276164198880_GL-ReleaseEngg"
+environment                    = "dev"
+project                        = "seahorse"
+register_component_lambda_name = "RegisterComponentLambda"
+get_components_lambda_name = "GetRegisteredComponents"
+dynamo_admin_table_name = "FSBL_CONFIG"
+idp-name = "Globallink"
+user-pool-client-redirect-urls=["http://localhost:3375/components/seaHorseAuthentication/SeaHorseAuthenticationCallback.html","https://s3.amazonaws.com/dev.seahorse.finsemble/components/seaHorseAuthentication/SeaHorseAuthenticationCallback.html"]
+user-pool-client-logout-urls=["http://localhost:3375/components/seaHorseAuthentication/SeaHorseAuthenticationSignout.html","https://s3.amazonaws.com/dev.seahorse.finsemble/components/seaHorseAuthentication/SeaHorseAuthenticationSignout.html"]
