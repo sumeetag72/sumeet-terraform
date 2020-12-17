@@ -36,12 +36,18 @@ module "admin_lambdas" {
 
 }
 
-module "admin-apis" {
-  source = "./modules/admin-apis"
+module "admin-api" {
+  source = "./modules/admin-api"
 
   aws_account_id = var.aws_account_id
   region = var.region
   admin_lambda_name = module.admin_lambdas.admin_lambda_name
   get_components_lambda_name = var.get_components_lambda_name
+
+}
+
+module "auth" {
+  source = "./modules/auth"
+  environment = var.environment
 
 }

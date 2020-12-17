@@ -89,6 +89,8 @@ resource "aws_api_gateway_integration_response" "admin_api_get_integration_respo
   ]
 }
 
+############################################### DEPLOY ##############################################
+
 resource "aws_api_gateway_deployment" "admin_api_deployment_dev" {
   depends_on = [
     aws_api_gateway_method.admin_api_register_method,
