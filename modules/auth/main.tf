@@ -6,15 +6,16 @@ resource "aws_cognito_user_pool" "seahorse_user_pool" {
       name                = "email"
       attribute_data_type = "String"
       required            = true
+      mutable             = true
     }
 }
 
 resource "aws_cognito_user_pool_client" "seahorse_web_client" {
-  name                = "client"
+  name                = "seahorse_web_client"
   user_pool_id        = aws_cognito_user_pool.seahorse_user_pool.id
-  generate_secret     = true
+  generate_secret     = false
   allowed_oauth_flows                  = ["code", "implicit"]
-  allowed_oauth_scopes                 = ["email","phone","openid","aws.cognito.signin.user.admin"]
+  allowed_oauth_scopes                 = ["email","phone","openid","aws.cognito.signin.user.admin","profile"]
   explicit_auth_flows = ["ADMIN_NO_SRP_AUTH"]
   allowed_oauth_flows_user_pool_client = true
   supported_identity_providers = ["COGNITO",var.idp-name]
@@ -40,27 +41,37 @@ resource "aws_cognito_identity_pool" "seahorse_identity_pool" {
   }
 }
 
-resource "aws_iam_role" "auth_iam_role" {
-  name               = "auth_iam_role"
-  assume_role_policy = file("${path.module}/policy/auth_iam_role_assume_policy.json")
+resource "aws_iam_role" "auth_web_iam_role" {
+  name               = "auth_web_iam_role"
+  assume_role_policy = templatefile("${path.module}/policy/auth_iam_role_assume_policy.tpl", {
+    identity_pool_id = aws_cognito_identity_pool.seahorse_identity_pool.id
+  })
+  depends_on = [
+    aws_cognito_identity_pool.seahorse_identity_pool
+  ]
 }
 
-resource "aws_iam_role" "unauth_iam_role" {
-  name               = "unauth_iam_role"
-  assume_role_policy = file("${path.module}/policy/unauth_iam_role_assume_policy.json")
+resource "aws_iam_role" "unauth_web_iam_role" {
+  name               = "unauth_web_iam_role"
+  assume_role_policy = templatefile("${path.module}/policy/unauth_iam_role_assume_policy.tpl", {
+    identity_pool_id = aws_cognito_identity_pool.seahorse_identity_pool.id
+  })
+  depends_on = [
+    aws_cognito_identity_pool.seahorse_identity_pool
+  ]
 }
 
 resource "aws_iam_role_policy" "web_iam_unauth_role_policy" {
   name   = "web_iam_unauth_role_policy"
-  role   = aws_iam_role.unauth_iam_role.id
+  role   = aws_iam_role.unauth_web_iam_role.id
   policy = file("${path.module}/policy/unauth_iam_role_policy.json")
 }
 
 resource "aws_cognito_identity_pool_roles_attachment" "seahorse_identity_pool_roles" {
   identity_pool_id = aws_cognito_identity_pool.seahorse_identity_pool.id
   roles = {
-    authenticated   = aws_iam_role.auth_iam_role.arn
-    unauthenticated = aws_iam_role.unauth_iam_role.arn
+    authenticated   = aws_iam_role.auth_web_iam_role.arn
+    unauthenticated = aws_iam_role.unauth_web_iam_role.arn
   }
 }
 
