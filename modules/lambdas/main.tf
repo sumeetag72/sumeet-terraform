@@ -71,3 +71,37 @@ resource "aws_lambda_function" "GetRegisteredComponents" {
     }
   }
 }
+
+resource "aws_cloudwatch_event_rule" "one_minute_ping" {
+  name                = "one_minute_ping"
+  description         = "Pings every one minute"
+  schedule_expression = "rate(1 minute)"
+}
+
+resource "aws_cloudwatch_event_target" "ping_register_lambda_every_one_minute" {
+  rule      = aws_cloudwatch_event_rule.one_minute_ping.name
+  target_id = "lambda"
+  arn       = aws_lambda_function.RegisterComponentLambda.arn
+}
+
+resource "aws_cloudwatch_event_target" "ping_get_lambda_every_one_minute" {
+  rule      = aws_cloudwatch_event_rule.one_minute_ping.name
+  target_id = "lambda"
+  arn       = aws_lambda_function.GetRegisteredComponents.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_ping_register_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.RegisterComponentLambda.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.one_minute_ping.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_ping_get_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.GetRegisteredComponents.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.one_minute_ping.arn
+}
