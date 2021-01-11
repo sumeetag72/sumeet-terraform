@@ -85,6 +85,7 @@ resource "aws_cognito_identity_provider" "identity_provider_sso" {
   }
 
   attribute_mapping = {
-    email    = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+    email    = "emailaddress"
+    profile = "glauth"
   }
 }
