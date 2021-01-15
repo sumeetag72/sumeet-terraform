@@ -80,13 +80,13 @@ resource "aws_cloudwatch_event_rule" "one_minute_ping" {
 
 resource "aws_cloudwatch_event_target" "ping_register_lambda_every_one_minute" {
   rule      = aws_cloudwatch_event_rule.one_minute_ping.name
-  target_id = "lambda"
+  target_id = "register-ping"
   arn       = aws_lambda_function.RegisterComponentLambda.arn
 }
 
 resource "aws_cloudwatch_event_target" "ping_get_lambda_every_one_minute" {
   rule      = aws_cloudwatch_event_rule.one_minute_ping.name
-  target_id = "lambda"
+  target_id = "get-ping"
   arn       = aws_lambda_function.GetRegisteredComponents.arn
 }
 

@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  profile = "276164198880_GL-ReleaseEngg"
+  profile = var.profile
   region  = var.region
 }
 

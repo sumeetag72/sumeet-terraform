@@ -38,6 +38,9 @@ resource "aws_api_gateway_method_response" "admin_api_register_method_response" 
   resource_id = aws_api_gateway_resource.admin_api_resource.id
   http_method = aws_api_gateway_method.admin_api_register_method.http_method
   status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true,
+  }
 }
 
 resource "aws_api_gateway_integration_response" "admin_api_register_integration_response" {
@@ -45,7 +48,9 @@ resource "aws_api_gateway_integration_response" "admin_api_register_integration_
   resource_id = aws_api_gateway_resource.admin_api_resource.id
   http_method = aws_api_gateway_method.admin_api_register_method.http_method
   status_code = aws_api_gateway_method_response.admin_api_register_method_response.status_code
-
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'", # replace with hostname of frontend (CloudFront)
+  }
   depends_on = [
     aws_api_gateway_integration.admin_api_register_method_integration
   ]
@@ -76,6 +81,9 @@ resource "aws_api_gateway_method_response" "admin_api_get_method_response" {
   resource_id = aws_api_gateway_resource.admin_api_resource.id
   http_method = aws_api_gateway_method.admin_api_get_method.http_method
   status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true,
+  }
 }
 
 resource "aws_api_gateway_integration_response" "admin_api_get_integration_response" {
@@ -84,9 +92,59 @@ resource "aws_api_gateway_integration_response" "admin_api_get_integration_respo
   http_method = aws_api_gateway_method.admin_api_get_method.http_method
   status_code = aws_api_gateway_method_response.admin_api_get_method_response.status_code
 
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'", # replace with hostname of frontend (CloudFront)
+  }
+
   depends_on = [
     aws_api_gateway_integration.admin_api_get_method_integration
   ]
+}
+
+
+###############################################CORS##################################################
+
+resource "aws_api_gateway_method" "mock_options_method" {
+  rest_api_id   = aws_api_gateway_rest_api.admin_api.id
+  resource_id   = aws_api_gateway_resource.admin_api_resource.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "mock_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.admin_api.id
+  resource_id = aws_api_gateway_resource.admin_api_resource.id
+  http_method = aws_api_gateway_method.mock_options_method.http_method
+  type = "MOCK"
+}
+
+resource "aws_api_gateway_method_response" "mock_options_response" {
+  depends_on = [aws_api_gateway_method.mock_options_method]
+  rest_api_id = aws_api_gateway_rest_api.admin_api.id
+  resource_id = aws_api_gateway_resource.admin_api_resource.id
+  http_method = aws_api_gateway_method.mock_options_method.http_method
+  status_code = 200
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Headers" = true
+  }
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
+resource "aws_api_gateway_integration_response" "mock_options_integration_response" {
+  depends_on = [aws_api_gateway_integration.mock_options_integration, aws_api_gateway_method_response.mock_options_response]
+  rest_api_id = aws_api_gateway_rest_api.admin_api.id
+  resource_id = aws_api_gateway_resource.admin_api_resource.id
+  http_method = aws_api_gateway_method.mock_options_method.http_method
+  status_code = 200
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'", # replace with hostname of frontend (CloudFront)
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Methods" = "'GET, OPTIONS, POST'" # remove or add HTTP methods as needed
+  }
 }
 
 ############################################### DEPLOY ##############################################
@@ -100,7 +158,11 @@ resource "aws_api_gateway_deployment" "admin_api_deployment_dev" {
     aws_api_gateway_method.admin_api_get_method,
     aws_api_gateway_integration.admin_api_get_method_integration,
     aws_api_gateway_method_response.admin_api_get_method_response,
-    aws_api_gateway_integration_response.admin_api_get_integration_response
+    aws_api_gateway_integration_response.admin_api_get_integration_response,
+    aws_api_gateway_method.mock_options_method,
+    aws_api_gateway_integration.mock_options_integration,
+    aws_api_gateway_method_response.mock_options_response,
+    aws_api_gateway_integration_response.mock_options_integration_response
   ]
   rest_api_id = aws_api_gateway_rest_api.admin_api.id
   stage_name = "dev"
