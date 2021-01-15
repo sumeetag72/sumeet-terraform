@@ -49,7 +49,7 @@ resource "aws_api_gateway_integration_response" "admin_api_register_integration_
   http_method = aws_api_gateway_method.admin_api_register_method.http_method
   status_code = aws_api_gateway_method_response.admin_api_register_method_response.status_code
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'", # replace with hostname of frontend (CloudFront)
+    "method.response.header.Access-Control-Allow-Origin" = "'*'", # will be cloudfront host when available
   }
   depends_on = [
     aws_api_gateway_integration.admin_api_register_method_integration
@@ -93,7 +93,7 @@ resource "aws_api_gateway_integration_response" "admin_api_get_integration_respo
   status_code = aws_api_gateway_method_response.admin_api_get_method_response.status_code
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'", # replace with hostname of frontend (CloudFront)
+    "method.response.header.Access-Control-Allow-Origin" = "'*'", # r# will be cloudfront host when available
   }
 
   depends_on = [
