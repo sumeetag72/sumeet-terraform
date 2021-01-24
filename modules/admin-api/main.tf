@@ -9,7 +9,7 @@ resource "aws_api_gateway_rest_api" "admin_api" {
 resource "aws_api_gateway_resource" "admin_api_resource" {
   rest_api_id = aws_api_gateway_rest_api.admin_api.id
   parent_id = aws_api_gateway_rest_api.admin_api.root_resource_id
-  path_part = "fsbl"
+  path_part = "{proxy+}"
 }
 
 ################################### REGISTER COMPONENT ######################################## 
@@ -65,13 +65,16 @@ resource "aws_api_gateway_method" "admin_api_get_method" {
   request_parameters = {
     "method.request.header.Content-Type" = true
   }
+  request_models = { 
+    "application/json" = "Empty" 
+  }
 }
 
 resource "aws_api_gateway_integration" "admin_api_get_method_integration" {
   rest_api_id = aws_api_gateway_rest_api.admin_api.id
   resource_id = aws_api_gateway_resource.admin_api_resource.id
   http_method = aws_api_gateway_method.admin_api_get_method.http_method
-  type = "AWS"
+  type = "AWS_PROXY"
   uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.aws_account_id}:function:${var.get_components_lambda_name}/invocations"
   integration_http_method = "POST"
 }
