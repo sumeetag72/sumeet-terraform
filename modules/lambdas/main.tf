@@ -33,6 +33,14 @@ resource "aws_iam_policy" "seahorse_get_lambdas_exec_policy" {
   })
 }
 
+resource "aws_iam_policy" "seahorse_delete_lambdas_exec_policy" {
+  name = "seahorse_delete_lambdas_exec_policy"
+  policy = templatefile("${path.module}/policy/admin-lambda-policy.tpl", {
+    register_component_lambda_name = var.delete-components-lambda-name
+    aws_account_id = var.aws_account_id
+  })
+}
+
 resource "aws_iam_role_policy_attachment" "admin_lambda_dynamodb" {
   role       = aws_iam_role.seahorse_iam_role_for_lambdas.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
@@ -46,6 +54,11 @@ resource "aws_iam_role_policy_attachment" "admin_register_lambda_exec" {
 resource "aws_iam_role_policy_attachment" "admin_get_lambda_exec" {
   role       = aws_iam_role.seahorse_iam_role_for_lambdas.name
   policy_arn = aws_iam_policy.seahorse_get_lambdas_exec_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "admin_delete_lambda_exec" {
+  role       = aws_iam_role.seahorse_iam_role_for_lambdas.name
+  policy_arn = aws_iam_policy.seahorse_delete_lambdas_exec_policy.arn
 }
 
 resource "aws_lambda_function" "RegisterComponentLambda" {
@@ -86,6 +99,25 @@ resource "aws_lambda_function" "GetRegisteredComponents" {
   }
 }
 
+resource "aws_lambda_function" "DeleteRegisteredComponent" {
+  filename      = "../seahorse-server/app.adminservices/target/adminservices-1.0.jar"
+  function_name = var.delete-components-lambda-name
+  role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
+  handler       = "com.globallink.admin.fsbl.DeleteComponentService::handleRequest"
+
+  runtime = "java8"
+  memory_size = "512"
+  timeout = "15"
+
+  publish = true
+
+  environment {
+    variables = {
+      environment = var.environment
+    }
+  }
+}
+
 resource "aws_cloudwatch_event_rule" "one_minute_ping" {
   name                = "one_minute_ping"
   description         = "Pings every one minute"
@@ -104,6 +136,12 @@ resource "aws_cloudwatch_event_target" "ping_get_lambda_every_one_minute" {
   arn       = aws_lambda_function.GetRegisteredComponents.arn
 }
 
+resource "aws_cloudwatch_event_target" "ping_delete_lambda_every_one_minute" {
+  rule      = aws_cloudwatch_event_rule.one_minute_ping.name
+  target_id = "get-ping"
+  arn       = aws_lambda_function.DeleteRegisteredComponent.arn
+}
+
 resource "aws_lambda_permission" "allow_cloudwatch_to_ping_register_lambda" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
@@ -116,6 +154,14 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_ping_get_lambda" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.GetRegisteredComponents.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.one_minute_ping.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_ping_delete_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.DeleteRegisteredComponent.function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.one_minute_ping.arn
 }
