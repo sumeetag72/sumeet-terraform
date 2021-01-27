@@ -38,6 +38,11 @@ variable "get_components_lambda_name" {
   default = null
 }
 
+variable "delete_component_lambda_name" {
+  type    = string
+  default = null
+}
+
 variable "idp-name" {
   type    = string
   default = null

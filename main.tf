@@ -32,18 +32,18 @@ module "admin_lambdas" {
 
   register-component-lambda-name = var.register_component_lambda_name
   get-components-lambda-name = var.get_components_lambda_name
+  delete-components-lambda-name = var.delete_component_lambda_name
   environment = var.environment
   aws_account_id = var.aws_account_id
 }
 
 module "admin-api" {
   source = "./modules/admin-api"
-
   aws_account_id = var.aws_account_id
   region = var.region
-  admin_lambda_name = module.admin_lambdas.admin_lambda_name
+  register_component_lambda_name = var.register_component_lambda_name
   get_components_lambda_name = var.get_components_lambda_name
-
+  delete_component_lambda_name = var.delete_component_lambda_name
 }
 
 module "auth" {
