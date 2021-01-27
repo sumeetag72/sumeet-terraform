@@ -29,7 +29,7 @@ resource "aws_api_gateway_integration" "admin_api_register_method_integration" {
   resource_id = aws_api_gateway_resource.admin_api_resource.id
   http_method = aws_api_gateway_method.admin_api_register_method.http_method
   type = "AWS"
-  uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.aws_account_id}:function:${var.admin_lambda_name}/invocations"
+  uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.aws_account_id}:function:${var.register_component_lambda_name}/invocations"
   integration_http_method = "POST"
 }
 
@@ -104,6 +104,54 @@ resource "aws_api_gateway_integration_response" "admin_api_get_integration_respo
   ]
 }
 
+#####################################DELETE COMPONENT#####################################################
+
+resource "aws_api_gateway_method" "admin_api_delete_method" {
+  rest_api_id = aws_api_gateway_rest_api.admin_api.id
+  resource_id = aws_api_gateway_resource.admin_api_resource.id
+  http_method = "DELETE"
+  authorization = "NONE"
+  request_parameters = {
+    "method.request.header.Content-Type" = true
+  }
+  request_models = { 
+    "application/json" = "Empty" 
+  }
+}
+
+resource "aws_api_gateway_integration" "admin_api_delete_method_integration" {
+  rest_api_id = aws_api_gateway_rest_api.admin_api.id
+  resource_id = aws_api_gateway_resource.admin_api_resource.id
+  http_method = aws_api_gateway_method.admin_api_delete_method.http_method
+  type = "AWS_PROXY"
+  uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.aws_account_id}:function:${var.delete_component_lambda_name}/invocations"
+  integration_http_method = "POST"
+}
+
+resource "aws_api_gateway_method_response" "admin_api_delete_method_response" {
+  rest_api_id = aws_api_gateway_rest_api.admin_api.id
+  resource_id = aws_api_gateway_resource.admin_api_resource.id
+  http_method = aws_api_gateway_method.admin_api_delete_method.http_method
+  status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true,
+  }
+}
+
+resource "aws_api_gateway_integration_response" "admin_api_delete_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.admin_api.id
+  resource_id = aws_api_gateway_resource.admin_api_resource.id
+  http_method = aws_api_gateway_method.admin_api_delete_method.http_method
+  status_code = aws_api_gateway_method_response.admin_api_delete_method_response.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'", # r# will be cloudfront host when available
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.admin_api_delete_method_integration
+  ]
+}
 
 ###############################################CORS##################################################
 
@@ -174,7 +222,7 @@ resource "aws_api_gateway_deployment" "admin_api_deployment_dev" {
 resource "aws_lambda_permission" "admin-register-lambda-permission" {
   statement_id = "AllowAPIGatewayInvokePost"
   action = "lambda:InvokeFunction"
-  function_name = var.admin_lambda_name
+  function_name = var.register_component_lambda_name
   principal = "apigateway.amazonaws.com"
   source_arn = "${aws_api_gateway_rest_api.admin_api.execution_arn}/*/*/*"
 }
@@ -183,6 +231,14 @@ resource "aws_lambda_permission" "admin-get-lambda-permission" {
   statement_id = "AllowAPIGatewayInvokeGet"
   action = "lambda:InvokeFunction"
   function_name = var.get_components_lambda_name
+  principal = "apigateway.amazonaws.com"
+  source_arn = "${aws_api_gateway_rest_api.admin_api.execution_arn}/*/*/*"
+}
+
+resource "aws_lambda_permission" "admin-delete-lambda-permission" {
+  statement_id = "AllowAPIGatewayInvokeGet"
+  action = "lambda:InvokeFunction"
+  function_name = var.delete_component_lambda_name
   principal = "apigateway.amazonaws.com"
   source_arn = "${aws_api_gateway_rest_api.admin_api.execution_arn}/*/*/*"
 }

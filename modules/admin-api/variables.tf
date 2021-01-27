@@ -8,12 +8,17 @@ variable "region" {
   default = "us-east-1"
 }
 
-variable "admin_lambda_name" {
+variable "register_component_lambda_name" {
   type    = string
   default = null
 }
 
 variable "get_components_lambda_name" {
+  type    = string
+  default = null
+}
+
+variable "delete_component_lambda_name" {
   type    = string
   default = null
 }
