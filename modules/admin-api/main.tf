@@ -22,13 +22,16 @@ resource "aws_api_gateway_method" "admin_api_register_method" {
   request_parameters = {
     "method.request.header.Content-Type" = true
   }
+  request_models = { 
+    "application/json" = "Empty" 
+  }
 }
 
 resource "aws_api_gateway_integration" "admin_api_register_method_integration" {
   rest_api_id = aws_api_gateway_rest_api.admin_api.id
   resource_id = aws_api_gateway_resource.admin_api_resource.id
   http_method = aws_api_gateway_method.admin_api_register_method.http_method
-  type = "AWS"
+  type = "AWS_PROXY"
   uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.aws_account_id}:function:${var.register_component_lambda_name}/invocations"
   integration_http_method = "POST"
 }
