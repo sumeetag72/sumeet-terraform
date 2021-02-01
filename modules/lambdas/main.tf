@@ -138,7 +138,7 @@ resource "aws_cloudwatch_event_target" "ping_get_lambda_every_one_minute" {
 
 resource "aws_cloudwatch_event_target" "ping_delete_lambda_every_one_minute" {
   rule      = aws_cloudwatch_event_rule.one_minute_ping.name
-  target_id = "get-ping"
+  target_id = "delete-ping"
   arn       = aws_lambda_function.DeleteRegisteredComponent.arn
 }
 
