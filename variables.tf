@@ -55,3 +55,15 @@ variable "user-pool-client-redirect-urls" {
 variable "user-pool-client-logout-urls" {
   type    = list(string)
 }
+
+variable "deploy_auth" {
+  description = "If set to true, cognito auth will be configured"
+  type        = bool
+  default     = false
+}
+
+variable "user_pool_arn" {
+  description = "needed when deploy auth is disabled"
+  type        = string
+  default = null
+}
