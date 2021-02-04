@@ -22,3 +22,8 @@ variable "delete_component_lambda_name" {
   type    = string
   default = null
 }
+
+variable "environment" {
+  type    = string
+  default = null
+}

@@ -203,7 +203,7 @@ resource "aws_api_gateway_integration_response" "mock_options_integration_respon
 
 ############################################### DEPLOY ##############################################
 
-resource "aws_api_gateway_deployment" "admin_api_deployment_dev" {
+resource "aws_api_gateway_deployment" "admin_api_deployment" {
   depends_on = [
     aws_api_gateway_method.admin_api_register_method,
     aws_api_gateway_integration.admin_api_register_method_integration,
@@ -219,7 +219,7 @@ resource "aws_api_gateway_deployment" "admin_api_deployment_dev" {
     aws_api_gateway_integration_response.mock_options_integration_response
   ]
   rest_api_id = aws_api_gateway_rest_api.admin_api.id
-  stage_name = "dev"
+  stage_name = var.environment
 }
 
 resource "aws_lambda_permission" "admin-register-lambda-permission" {
@@ -247,5 +247,5 @@ resource "aws_lambda_permission" "admin-delete-lambda-permission" {
 }
 
 output "dev_url" {
-  value = "https://${aws_api_gateway_deployment.admin_api_deployment_dev.rest_api_id}.execute-api.${var.region}.amazonaws.com/${aws_api_gateway_deployment.admin_api_deployment_dev.stage_name}"
+  value = "https://${aws_api_gateway_deployment.admin_api_deployment.rest_api_id}.execute-api.${var.region}.amazonaws.com/${aws_api_gateway_deployment.admin_api_deployment.stage_name}"
 }
