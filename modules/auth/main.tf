@@ -89,3 +89,12 @@ resource "aws_cognito_identity_provider" "identity_provider_sso" {
     profile = "glauth"
   }
 }
+
+output "user_pool_arn" {
+  description = "ARN of the user pool"
+  value       = aws_cognito_user_pool.seahorse_user_pool.arn
+
+  depends_on = [
+    aws_cognito_identity_provider.identity_provider_sso
+  ]
+}
