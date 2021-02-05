@@ -69,7 +69,7 @@ resource "aws_api_gateway_integration_response" "web_backend_api_get_integration
   ]
 }
 
-###############################################CORS##################################################
+###############################################CORS + OPTIONS##################################################
 
 resource "aws_api_gateway_method" "mock_options_method" {
   rest_api_id   = aws_api_gateway_rest_api.web_backend_api.id
@@ -83,6 +83,9 @@ resource "aws_api_gateway_integration" "mock_options_integration" {
   resource_id = aws_api_gateway_resource.web_backend_api_resource.id
   http_method = aws_api_gateway_method.mock_options_method.http_method
   type = "MOCK"
+  request_templates = {               
+    "application/json" = "${file("${path.module}/templates/mapping-template.json")}"
+  }
 }
 
 resource "aws_api_gateway_method_response" "mock_options_response" {
