@@ -16,5 +16,4 @@ log/
 target/
 
 #terraform
-terraform.tfstate*
 .terraform/
