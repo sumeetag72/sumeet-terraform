@@ -12,6 +12,13 @@ resource "aws_api_gateway_resource" "admin_api_resource" {
   path_part = "{proxy+}"
 }
 
+resource "aws_api_gateway_rest_api_policy" "admin_api_policy" {
+  rest_api_id = aws_api_gateway_rest_api.admin_api.id
+  policy = templatefile("${path.module}/policy/admin-api-policy.tpl", {
+    api_execution_arn = aws_api_gateway_rest_api.admin_api.execution_arn
+  })
+}
+
 ################################### REGISTER COMPONENT ######################################## 
 
 resource "aws_api_gateway_method" "admin_api_register_method" {

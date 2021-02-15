@@ -84,7 +84,7 @@ resource "aws_api_gateway_integration" "mock_options_integration" {
   http_method = aws_api_gateway_method.mock_options_method.http_method
   type = "MOCK"
   request_templates = {               
-    "application/json" = "${file("${path.module}/templates/mapping-template.json")}"
+    "application/json" = file("${path.module}/templates/mapping-template.json")
   }
 }
 

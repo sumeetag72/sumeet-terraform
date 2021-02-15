@@ -3,10 +3,10 @@ resource "aws_dynamodb_table" "component-dynamodb-table" {
   billing_mode   = "PROVISIONED"
   read_capacity  = 5
   write_capacity = 5
-  hash_key       = "APP_ID"
+  hash_key       = "GROUP_ID"
 
   attribute {
-    name = "APP_ID"
+    name = "GROUP_ID"
     type = "S"
   }
 
