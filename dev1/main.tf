@@ -57,7 +57,7 @@ module "web-backend-api-with-existing-cognito" {
   user_pool_arn = var.user_pool_arn
 }
 
-/* module "auth" {
+module "auth" {
   source = "./modules/auth"
   environment = var.environment
   idp-name = var.idp-name
@@ -77,4 +77,3 @@ module "web-backend-api-with-fresh-cognito" {
     module.auth
   ]
 }
- */
