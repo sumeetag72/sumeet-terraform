@@ -12,3 +12,6 @@ user_pool_arn                  ="arn:aws:cognito-idp:us-east-1:154320630104:user
 user-pool-client-redirect-urls =["http://localhost:3375/local.seahorse.finsemble/components/seaHorseAuthentication/SeaHorseAuthentication.html,https://s3.amazonaws.com/dev.seahorse.finsemble/components/seaHorseAuthentication/SeaHorseAuthentication.html"]
 user-pool-client-logout-urls   =["http://localhost:3375/local.seahorse.finsemble/components/seaHorseAuthentication/SeaHorseAuthentication.html,https://s3.amazonaws.com/dev.seahorse.finsemble/components/seaHorseAuthentication/SeaHorseAuthentication.html"]
 deploy_auth                    =true
+domain_name_suffix="seahorse-dev.globallink.com"
+acm_certificate_arn="arn:aws:acm:us-east-1:154320630104:certificate/0332aaa2-2be8-4701-ade8-c530c8c02b44"
+whitelisted_ips=["208.89.236.196/32","74.204.251.4/32","74.204.251.4/32","159.18.234.5/32","159.18.234.12/32","208.89.239.4/32","208.89.239.5/32","63.106.110.9/32","63.106.110.14/32","185.84.23.5/32","208.89.239.4/32","165.225.39.0/24","165.225.38.0/24","165.225.220.0/24","147.161.166.0/24","10.20.54.0/24"]
