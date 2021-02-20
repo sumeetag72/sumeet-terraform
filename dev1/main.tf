@@ -12,6 +12,11 @@ provider "aws" {
   region  = var.region
 }
 
+module "acm" {
+  source = "../modules/acm"
+  environment = var.environment
+}
+
 module "waf" {
   source = "../modules/waf"
 
@@ -25,8 +30,8 @@ module "web-static" {
 
   project = var.project
   environment = var.environment
-  domain_name_suffix = var.domain_name_suffix
-  acm_certificate_arn = var.acm_certificate_arn
+  domain_name = var.domain_name
+  acm_certificate_arn = module.acm.acm_certificate_arn
   seahorse_web_acl_id = module.waf.seahorse_web_acl_id
 }
 
@@ -47,7 +52,7 @@ module "admin_lambdas" {
   aws_account_id = var.aws_account_id
 }
 
-module "web-admin-api" {
+module "web_admin_api" {
   source = "../modules/web-admin-api"
   aws_account_id = var.aws_account_id
   region = var.region
@@ -55,9 +60,11 @@ module "web-admin-api" {
   register_component_lambda_name = var.register_component_lambda_name
   get_components_lambda_name = var.get_components_lambda_name
   delete_component_lambda_name = var.delete_component_lambda_name
+  domain_name = var.domain_name
+  acm_certificate_arn = module.acm.acm_certificate_arn
 }
 
-module "web-backend-api-with-existing-cognito" {
+module "web_backend_api_with_existing_cognito" {
   count   = var.deploy_auth ? 0 : 1
   source = "../modules/web-backend-api"
   aws_account_id = var.aws_account_id
@@ -65,6 +72,8 @@ module "web-backend-api-with-existing-cognito" {
   environment = var.environment
   get_components_lambda_name = var.get_components_lambda_name
   user_pool_arn = var.user_pool_arn
+  domain_name = var.domain_name
+  acm_certificate_arn = module.acm.acm_certificate_arn
 }
 
 module "auth" {
@@ -73,9 +82,12 @@ module "auth" {
   idp-name = var.idp-name
   user-pool-client-redirect-urls = var.user-pool-client-redirect-urls
   user-pool-client-logout-urls = var.user-pool-client-logout-urls
+  deploy_auth   = var.deploy_auth
+  domain_name = var.domain_name
+  acm_certificate_arn = module.acm.acm_certificate_arn
 }
 
-module "web-backend-api-with-fresh-cognito" {
+module "web_backend_api_with_fresh_cognito" {
   count   = var.deploy_auth ? 1 : 0
   source = "../modules/web-backend-api"
   aws_account_id = var.aws_account_id
