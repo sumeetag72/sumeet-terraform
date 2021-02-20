@@ -68,7 +68,7 @@ resource "aws_lambda_function" "RegisterComponentLambda" {
   handler       = "com.globallink.admin.fsbl.RegisterComponentService::handleRequest"
 
   runtime = "java8"
-  memory_size = "512"
+  memory_size = "2048"
   timeout = "15"
 
   publish = true
@@ -87,7 +87,7 @@ resource "aws_lambda_function" "GetRegisteredComponents" {
   handler       = "com.globallink.admin.fsbl.GetComponentService::handleRequest"
 
   runtime = "java8"
-  memory_size = "512"
+  memory_size = "2048"
   timeout = "15"
 
   publish = true
@@ -106,7 +106,7 @@ resource "aws_lambda_function" "DeleteRegisteredComponent" {
   handler       = "com.globallink.admin.fsbl.DeleteComponentService::handleRequest"
 
   runtime = "java8"
-  memory_size = "512"
+  memory_size = "2048"
   timeout = "15"
 
   publish = true
