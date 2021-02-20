@@ -67,3 +67,19 @@ variable "user_pool_arn" {
   type        = string
   default = null
 }
+
+variable "whitelisted_ips" {
+  description = "needed when deploy auth is disabled"
+  type        = map
+  default = null
+}
+
+variable "domain_name_suffix" {
+  type    = string
+  default = null
+}
+
+variable "acm_certificate_arn" {
+  type    = string
+  default = null
+}

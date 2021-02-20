@@ -12,12 +12,22 @@ provider "aws" {
   region  = var.region
 }
 
-module "s3_buckets" {
-  source = "../modules/s3-buckets"
+module "waf" {
+  source = "../modules/waf"
 
   project = var.project
   environment = var.environment
+  whitelisted_ips = var.whitelisted_ips
+}
 
+module "web_static" {
+  source = "../modules/web-static"
+
+  project = var.project
+  environment = var.environment
+  domain_name_suffix = var.domain_name_suffix
+  acm_certificate_arn = var.acm_certificate_arn
+  seahorse_web_acl_id = module.waf.seahorse_web_acl_id
 }
 
 module "dynamo_db" {
@@ -37,8 +47,8 @@ module "admin_lambdas" {
   aws_account_id = var.aws_account_id
 }
 
-module "admin-api" {
-  source = "../modules/admin-api"
+module "web-admin-api" {
+  source = "../modules/web-admin-api"
   aws_account_id = var.aws_account_id
   region = var.region
   environment = var.environment
@@ -58,7 +68,7 @@ module "web-backend-api-with-existing-cognito" {
 }
 
 /* module "auth" {
-  source = "./modules/auth"
+  source = "../modules/auth"
   environment = var.environment
   idp-name = var.idp-name
   user-pool-client-redirect-urls = var.user-pool-client-redirect-urls
@@ -67,7 +77,7 @@ module "web-backend-api-with-existing-cognito" {
 
 module "web-backend-api-with-fresh-cognito" {
   count   = var.deploy_auth ? 1 : 0
-  source = "./modules/web-backend-api"
+  source = "../modules/web-backend-api"
   aws_account_id = var.aws_account_id
   region = var.region
   environment = var.environment
