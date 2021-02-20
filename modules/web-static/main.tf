@@ -32,7 +32,7 @@ resource "aws_cloudfront_distribution" "finsemble_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = [format("%s.%s", "web", var.domain_name_suffix)]
+  aliases = [format("%s.%s", "web", var.domain_name)]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -97,7 +97,7 @@ resource "aws_cloudfront_distribution" "docs_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = [format("%s.%s", "docs", var.domain_name_suffix)]
+  aliases = [format("%s.%s", "docs", var.domain_name)]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -163,7 +163,7 @@ resource "aws_cloudfront_distribution" "storybook_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = [format("%s.%s", "storybook", var.domain_name_suffix)]
+  aliases = [format("%s.%s", "storybook", var.domain_name)]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]

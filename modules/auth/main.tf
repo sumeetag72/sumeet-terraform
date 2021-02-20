@@ -1,4 +1,5 @@
 resource "aws_cognito_user_pool" "seahorse_user_pool" {
+  count   = var.deploy_auth ? 1 : 0
   name                = "SeaHorse User Pool"
   username_attributes = ["email"]
 
@@ -11,6 +12,7 @@ resource "aws_cognito_user_pool" "seahorse_user_pool" {
 }
 
 resource "aws_cognito_user_pool_client" "seahorse_web_client" {
+  count   = var.deploy_auth ? 1 : 0
   name                = "seahorse_web_client"
   user_pool_id        = aws_cognito_user_pool.seahorse_user_pool.id
   generate_secret     = false
@@ -27,11 +29,13 @@ resource "aws_cognito_user_pool_client" "seahorse_web_client" {
 }
 
 resource "aws_cognito_user_pool_domain" "seahorse_auth_domain" {
+  count   = var.deploy_auth ? 1 : 0
   domain       = format("%s-globallink", var.environment)
   user_pool_id = aws_cognito_user_pool.seahorse_user_pool.id
 }
 
 resource "aws_cognito_identity_pool" "seahorse_identity_pool" {
+  count   = var.deploy_auth ? 1 : 0
   identity_pool_name               = "SeaHorse Identity Pool"
   allow_unauthenticated_identities = false
   cognito_identity_providers {
@@ -42,6 +46,7 @@ resource "aws_cognito_identity_pool" "seahorse_identity_pool" {
 }
 
 resource "aws_iam_role" "auth_web_iam_role" {
+  count   = var.deploy_auth ? 1 : 0
   name               = "auth_web_iam_role"
   assume_role_policy = templatefile("${path.module}/policy/auth_iam_role_assume_policy.tpl", {
     identity_pool_id = aws_cognito_identity_pool.seahorse_identity_pool.id
@@ -52,6 +57,7 @@ resource "aws_iam_role" "auth_web_iam_role" {
 }
 
 resource "aws_iam_role" "unauth_web_iam_role" {
+  count   = var.deploy_auth ? 1 : 0
   name               = "unauth_web_iam_role"
   assume_role_policy = templatefile("${path.module}/policy/unauth_iam_role_assume_policy.tpl", {
     identity_pool_id = aws_cognito_identity_pool.seahorse_identity_pool.id
@@ -62,12 +68,14 @@ resource "aws_iam_role" "unauth_web_iam_role" {
 }
 
 resource "aws_iam_role_policy" "web_iam_unauth_role_policy" {
+  count   = var.deploy_auth ? 1 : 0
   name   = "web_iam_unauth_role_policy"
   role   = aws_iam_role.unauth_web_iam_role.id
   policy = file("${path.module}/policy/unauth_iam_role_policy.json")
 }
 
 resource "aws_cognito_identity_pool_roles_attachment" "seahorse_identity_pool_roles" {
+  count   = var.deploy_auth ? 1 : 0
   identity_pool_id = aws_cognito_identity_pool.seahorse_identity_pool.id
   roles = {
     authenticated   = aws_iam_role.auth_web_iam_role.arn
@@ -76,6 +84,7 @@ resource "aws_cognito_identity_pool_roles_attachment" "seahorse_identity_pool_ro
 }
 
 resource "aws_cognito_identity_provider" "identity_provider_sso" {
+  count   = var.deploy_auth ? 1 : 0
   user_pool_id  = aws_cognito_user_pool.seahorse_user_pool.id
   provider_name = var.idp-name
   provider_type = "SAML"
@@ -91,8 +100,20 @@ resource "aws_cognito_identity_provider" "identity_provider_sso" {
 }
 
 output "user_pool_arn" {
+  count   = var.deploy_auth ? 1 : 0
   description = "ARN of the user pool"
   value       = aws_cognito_user_pool.seahorse_user_pool.arn
+
+  depends_on = [
+    aws_cognito_identity_provider.identity_provider_sso
+  ]
+}
+
+resource "aws_cognito_user_pool_domain" "attach_domain" {
+  count   = var.deploy_auth ? 1 : 0
+  domain          = var.domain_name
+  certificate_arn = var.acm_certificate_arn
+  user_pool_id    = aws_cognito_user_pool.seahorse_user_pool.id
 
   depends_on = [
     aws_cognito_identity_provider.identity_provider_sso

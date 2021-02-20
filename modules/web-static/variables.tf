@@ -8,7 +8,7 @@ variable "project" {
   default = null
 }
 
-variable "domain_name_suffix" {
+variable "domain_name" {
   type    = string
   default = null
 }

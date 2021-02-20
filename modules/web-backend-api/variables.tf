@@ -22,3 +22,13 @@ variable "user_pool_arn" {
   type    = string
   default = null
 }
+
+variable "domain_name" {
+  type    = string
+  default = null
+}
+
+variable "acm_certificate_arn" {
+  type    = string
+  default = null
+}
