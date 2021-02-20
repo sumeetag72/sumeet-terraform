@@ -70,11 +70,11 @@ variable "user_pool_arn" {
 
 variable "whitelisted_ips" {
   description = "needed when deploy auth is disabled"
-  type        = map
+  type        = list
   default = null
 }
 
-variable "domain_name_suffix" {
+variable "domain_name" {
   type    = string
   default = null
 }
