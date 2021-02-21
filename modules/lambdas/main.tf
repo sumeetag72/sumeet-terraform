@@ -62,13 +62,13 @@ resource "aws_iam_role_policy_attachment" "admin_delete_lambda_exec" {
 }
 
 resource "aws_lambda_function" "RegisterComponentLambda" {
-  filename      = "../seahorse/server/app.adminservices/target/adminservices-1.0.jar"
+  filename      = "../../seahorse/server/app.adminservices/target/adminservices-1.0.jar"
   function_name = var.register-component-lambda-name
   role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
   handler       = "com.globallink.admin.fsbl.RegisterComponentService::handleRequest"
 
   runtime = "java8"
-  memory_size = "2048"
+  memory_size = "4096"
   timeout = "15"
 
   publish = true
@@ -81,13 +81,13 @@ resource "aws_lambda_function" "RegisterComponentLambda" {
 }
 
 resource "aws_lambda_function" "GetRegisteredComponents" {
-  filename      = "../seahorse/server/app.adminservices/target/adminservices-1.0.jar"
+  filename      = "../../seahorse/server/app.adminservices/target/adminservices-1.0.jar"
   function_name = var.get-components-lambda-name
   role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
   handler       = "com.globallink.admin.fsbl.GetComponentService::handleRequest"
 
   runtime = "java8"
-  memory_size = "2048"
+  memory_size = "4096"
   timeout = "15"
 
   publish = true
@@ -100,13 +100,13 @@ resource "aws_lambda_function" "GetRegisteredComponents" {
 }
 
 resource "aws_lambda_function" "DeleteRegisteredComponent" {
-  filename      = "../seahorse/server/app.adminservices/target/adminservices-1.0.jar"
+  filename      = "../../seahorse/server/app.adminservices/target/adminservices-1.0.jar"
   function_name = var.delete-components-lambda-name
   role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
   handler       = "com.globallink.admin.fsbl.DeleteComponentService::handleRequest"
 
   runtime = "java8"
-  memory_size = "2048"
+  memory_size = "4096"
   timeout = "15"
 
   publish = true
