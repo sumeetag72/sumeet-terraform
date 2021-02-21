@@ -14,7 +14,7 @@ resource "aws_cognito_user_pool" "seahorse_user_pool" {
 resource "aws_cognito_user_pool_client" "seahorse_web_client" {
   count   = var.deploy_auth ? 1 : 0
   name                = "seahorse_web_client"
-  user_pool_id        = aws_cognito_user_pool.seahorse_user_pool.id
+  user_pool_id        = aws_cognito_user_pool.seahorse_user_pool[count.index].id
   generate_secret     = false
   allowed_oauth_flows                  = ["code", "implicit"]
   allowed_oauth_scopes                 = ["email","phone","openid","aws.cognito.signin.user.admin","profile"]
@@ -31,7 +31,7 @@ resource "aws_cognito_user_pool_client" "seahorse_web_client" {
 resource "aws_cognito_user_pool_domain" "seahorse_auth_domain" {
   count   = var.deploy_auth ? 1 : 0
   domain       = format("%s-globallink", var.environment)
-  user_pool_id = aws_cognito_user_pool.seahorse_user_pool.id
+  user_pool_id = aws_cognito_user_pool.seahorse_user_pool[count.index].id
 }
 
 resource "aws_cognito_identity_pool" "seahorse_identity_pool" {
@@ -39,8 +39,8 @@ resource "aws_cognito_identity_pool" "seahorse_identity_pool" {
   identity_pool_name               = "SeaHorse Identity Pool"
   allow_unauthenticated_identities = false
   cognito_identity_providers {
-    client_id               = aws_cognito_user_pool_client.seahorse_web_client.id
-    provider_name           = aws_cognito_user_pool.seahorse_user_pool.endpoint
+    client_id               = aws_cognito_user_pool_client.seahorse_web_client[count.index].id
+    provider_name           = aws_cognito_user_pool.seahorse_user_pool[count.index].endpoint
     server_side_token_check = false
   }
 }
@@ -49,7 +49,7 @@ resource "aws_iam_role" "auth_web_iam_role" {
   count   = var.deploy_auth ? 1 : 0
   name               = "auth_web_iam_role"
   assume_role_policy = templatefile("${path.module}/policy/auth_iam_role_assume_policy.tpl", {
-    identity_pool_id = aws_cognito_identity_pool.seahorse_identity_pool.id
+    identity_pool_id = aws_cognito_identity_pool.seahorse_identity_pool[count.index].id
   })
   depends_on = [
     aws_cognito_identity_pool.seahorse_identity_pool
@@ -60,7 +60,7 @@ resource "aws_iam_role" "unauth_web_iam_role" {
   count   = var.deploy_auth ? 1 : 0
   name               = "unauth_web_iam_role"
   assume_role_policy = templatefile("${path.module}/policy/unauth_iam_role_assume_policy.tpl", {
-    identity_pool_id = aws_cognito_identity_pool.seahorse_identity_pool.id
+    identity_pool_id = aws_cognito_identity_pool.seahorse_identity_pool[count.index].id
   })
   depends_on = [
     aws_cognito_identity_pool.seahorse_identity_pool
@@ -70,22 +70,22 @@ resource "aws_iam_role" "unauth_web_iam_role" {
 resource "aws_iam_role_policy" "web_iam_unauth_role_policy" {
   count   = var.deploy_auth ? 1 : 0
   name   = "web_iam_unauth_role_policy"
-  role   = aws_iam_role.unauth_web_iam_role.id
+  role   = aws_iam_role.unauth_web_iam_role[count.index].id
   policy = file("${path.module}/policy/unauth_iam_role_policy.json")
 }
 
 resource "aws_cognito_identity_pool_roles_attachment" "seahorse_identity_pool_roles" {
   count   = var.deploy_auth ? 1 : 0
-  identity_pool_id = aws_cognito_identity_pool.seahorse_identity_pool.id
+  identity_pool_id = aws_cognito_identity_pool.seahorse_identity_pool[count.index].id
   roles = {
-    authenticated   = aws_iam_role.auth_web_iam_role.arn
-    unauthenticated = aws_iam_role.unauth_web_iam_role.arn
+    authenticated   = aws_iam_role.auth_web_iam_role[count.index].arn
+    unauthenticated = aws_iam_role.unauth_web_iam_role[count.index].arn
   }
 }
 
 resource "aws_cognito_identity_provider" "identity_provider_sso" {
   count   = var.deploy_auth ? 1 : 0
-  user_pool_id  = aws_cognito_user_pool.seahorse_user_pool.id
+  user_pool_id  = aws_cognito_user_pool.seahorse_user_pool[count.index].id
   provider_name = var.idp-name
   provider_type = "SAML"
 
@@ -100,20 +100,15 @@ resource "aws_cognito_identity_provider" "identity_provider_sso" {
 }
 
 output "user_pool_arn" {
-  count   = var.deploy_auth ? 1 : 0
   description = "ARN of the user pool"
-  value       = aws_cognito_user_pool.seahorse_user_pool.arn
-
-  depends_on = [
-    aws_cognito_identity_provider.identity_provider_sso
-  ]
+  value       = join("", aws_cognito_user_pool.seahorse_user_pool[*].arn)
 }
 
 resource "aws_cognito_user_pool_domain" "attach_domain" {
   count   = var.deploy_auth ? 1 : 0
   domain          = var.domain_name
   certificate_arn = var.acm_certificate_arn
-  user_pool_id    = aws_cognito_user_pool.seahorse_user_pool.id
+  user_pool_id    = aws_cognito_user_pool.seahorse_user_pool[count.index].id
 
   depends_on = [
     aws_cognito_identity_provider.identity_provider_sso
