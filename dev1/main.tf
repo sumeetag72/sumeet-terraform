@@ -95,6 +95,8 @@ module "web_backend_api_with_fresh_cognito" {
   environment = var.environment
   get_components_lambda_name = var.get_components_lambda_name
   user_pool_arn = module.auth.user_pool_arn
+  domain_name = var.domain_name
+  acm_certificate_arn = module.acm.acm_certificate_arn
   depends_on = [
     module.auth
   ]
