@@ -5,11 +5,16 @@ locals {
   example_bucket_name  = format("%s.%s.simple-app", var.environment, var.project)
 }
 
+resource "aws_cloudfront_origin_access_identity" "finsemble_origin_access_identity" {
+  comment = "Finsemble OAI"
+}
+
 resource "aws_s3_bucket" "finsemble" {
   bucket = local.finsemble_bucket_name
   acl    = "public-read"
   policy = templatefile("${path.module}/policy/s3-buckets-policy.tpl", {
     bucket_name = local.finsemble_bucket_name
+    cdn_iam_arn = aws_cloudfront_origin_access_identity.finsemble_origin_access_identity.iam_arn
   })
 
   tags = {
@@ -54,6 +59,12 @@ resource "aws_cloudfront_distribution" "finsemble_distribution" {
     max_ttl                = 86400
   }
 
+  origin {
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.finsemble_origin_access_identity.cloudfront_access_identity_path
+    }
+  }
+
   restrictions {
     geo_restriction {
       restriction_type = "whitelist"
@@ -70,11 +81,16 @@ resource "aws_cloudfront_distribution" "finsemble_distribution" {
   web_acl_id = var.seahorse_web_acl_id
 }
 
+resource "aws_cloudfront_origin_access_identity" "docusaurus_origin_access_identity" {
+  comment = "Docusaurus OAI"
+}
+
 resource "aws_s3_bucket" "docusaurus" {
   bucket = local.docusaurus_bucket_name
   acl    = "public-read"
   policy = templatefile("${path.module}/policy/s3-buckets-policy.tpl", {
     bucket_name = local.docusaurus_bucket_name
+    cdn_iam_arn = aws_cloudfront_origin_access_identity.docusaurus_origin_access_identity.iam_arn
   })
 
   tags = {
@@ -119,6 +135,12 @@ resource "aws_cloudfront_distribution" "docs_distribution" {
     max_ttl                = 86400
   }
 
+  origin {
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.docusaurus_origin_access_identity.cloudfront_access_identity_path
+    }
+  }
+
   restrictions {
     geo_restriction {
       restriction_type = "whitelist"
@@ -136,11 +158,16 @@ resource "aws_cloudfront_distribution" "docs_distribution" {
   web_acl_id = var.seahorse_web_acl_id
 }
 
+resource "aws_cloudfront_origin_access_identity" "storybook_origin_access_identity" {
+  comment = "StoryBook OAI"
+}
+
 resource "aws_s3_bucket" "storybook" {
   bucket = local.storybook_bucket_name
   acl    = "public-read"
   policy = templatefile("${path.module}/policy/s3-buckets-policy.tpl", {
     bucket_name = local.storybook_bucket_name
+    cdn_iam_arn = aws_cloudfront_origin_access_identity.storybook_origin_access_identity.iam_arn
   })
 
   tags = {
@@ -185,6 +212,12 @@ resource "aws_cloudfront_distribution" "storybook_distribution" {
     max_ttl                = 86400
   }
 
+  origin {
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.storybook_origin_access_identity.cloudfront_access_identity_path
+    }
+  }
+
   restrictions {
     geo_restriction {
       restriction_type = "whitelist"
@@ -201,11 +234,16 @@ resource "aws_cloudfront_distribution" "storybook_distribution" {
   web_acl_id = var.seahorse_web_acl_id
 }
 
+resource "aws_cloudfront_origin_access_identity" "example_origin_access_identity" {
+  comment = "Examples OAI"
+}
+
 resource "aws_s3_bucket" "examples" {
   bucket = local.example_bucket_name
   acl    = "public-read"
   policy = templatefile("${path.module}/policy/s3-buckets-policy.tpl", {
     bucket_name = local.example_bucket_name
+    cdn_iam_arn = aws_cloudfront_origin_access_identity.example_origin_access_identity.iam_arn
   })
 
   tags = {
@@ -254,6 +292,12 @@ resource "aws_cloudfront_distribution" "examples_distribution" {
     geo_restriction {
       restriction_type = "whitelist"
       locations        = ["US", "CA", "GB", "DE"]
+    }
+  }
+
+  origin {
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.example_origin_access_identity.cloudfront_access_identity_path
     }
   }
 
