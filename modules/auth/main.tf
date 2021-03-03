@@ -104,7 +104,7 @@ output "user_pool_arn" {
   value       = join("", aws_cognito_user_pool.seahorse_user_pool[*].arn)
 }
 
-resource "aws_cognito_user_pool_domain" "attach_domain" {
+resource "aws_cognito_user_pool_domain" "domain" {
   count   = var.deploy_auth ? 1 : 0
   domain          = var.domain_name
   certificate_arn = var.acm_certificate_arn
