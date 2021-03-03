@@ -56,7 +56,7 @@ resource "aws_cloudfront_distribution" "finsemble_distribution" {
     viewer_protocol_policy = "allow-all"
     min_ttl                = 0
     default_ttl            = 3600
-    max_ttl                = 86400
+    max_ttl                = 10800
   }
 
   origin {
@@ -257,7 +257,7 @@ resource "aws_s3_bucket" "examples" {
   }
 }
 
-resource "aws_cloudfront_distribution" "examples_distribution" {
+resource "aws_cloudfront_distribution" "example_distribution" {
   origin {
     domain_name = aws_s3_bucket.finsemble.bucket_regional_domain_name
     origin_id   = local.example_bucket_name
