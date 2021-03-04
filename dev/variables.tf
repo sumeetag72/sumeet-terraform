@@ -83,3 +83,14 @@ variable "acm_certificate_arn" {
   type    = string
   default = null
 }
+
+variable "hosted_zone_id" {
+  type    = string
+  default = null
+}
+
+variable "configure_route53" {
+  description = "If set to true, route 53 mappings will be created"
+  type        = bool
+  default     = false
+}
