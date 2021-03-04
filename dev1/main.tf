@@ -101,3 +101,21 @@ module "web_backend_api_with_fresh_cognito" {
     module.auth
   ]
 }
+
+module "route53_setup" {
+  count   = var.configure_route53 ? 1 : 0
+  source = "../modules/route53"
+  region = var.region
+  hosted_zone_id = var.hosted_zone_id
+  domain_name = var.domain_name
+  finsemble_cdn_domain_name = module.web_static.finsemble_cdn_domain_name
+  storybook_cdn_domain_name = module.web_static.storybook_cdn_domain_name
+  docusaurus_cdn_domain_name = module.web_static.docusaurus_cdn_domain_name
+  example_cdn_domain_name = module.web_static.example_cdn_domain_name
+  web_api_cdn_domain_name = module.web_backend_api_with_fresh_auth_setup.domain_name
+  admin_api_cdn_domain_name = module.web_admin_api.domain_name
+  cognito_cdn_domain_name = module.auth.domain_name
+  depends_on = [
+    module.auth, module.web_admin_api, module.admin_lambdas, module.web_static
+  ]
+}
