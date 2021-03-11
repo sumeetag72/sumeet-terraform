@@ -32,6 +32,9 @@ resource "aws_cloudfront_distribution" "finsemble_distribution" {
   origin {
     domain_name = aws_s3_bucket.finsemble.bucket_regional_domain_name
     origin_id   = local.finsemble_bucket_name
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.finsemble_origin_access_identity.cloudfront_access_identity_path
+    }
   }
 
   enabled             = true
@@ -57,12 +60,6 @@ resource "aws_cloudfront_distribution" "finsemble_distribution" {
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 10800
-  }
-
-  origin {
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.finsemble_origin_access_identity.cloudfront_access_identity_path
-    }
   }
 
   restrictions {
@@ -108,13 +105,16 @@ resource "aws_cloudfront_distribution" "docs_distribution" {
   origin {
     domain_name = aws_s3_bucket.docusaurus.bucket_regional_domain_name
     origin_id   = local.docusaurus_bucket_name
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.docusaurus_origin_access_identity.cloudfront_access_identity_path
+    }
   }
 
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = [format("%s.%s", "docs", var.domain_name)]
+  aliases = [format("%s.%s", "docusaurus", var.domain_name)]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -133,12 +133,6 @@ resource "aws_cloudfront_distribution" "docs_distribution" {
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 86400
-  }
-
-  origin {
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.docusaurus_origin_access_identity.cloudfront_access_identity_path
-    }
   }
 
   restrictions {
@@ -185,6 +179,9 @@ resource "aws_cloudfront_distribution" "storybook_distribution" {
   origin {
     domain_name = aws_s3_bucket.storybook.bucket_regional_domain_name
     origin_id   = local.storybook_bucket_name
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.storybook_origin_access_identity.cloudfront_access_identity_path
+    }
   }
 
   enabled             = true
@@ -210,12 +207,6 @@ resource "aws_cloudfront_distribution" "storybook_distribution" {
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 86400
-  }
-
-  origin {
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.storybook_origin_access_identity.cloudfront_access_identity_path
-    }
   }
 
   restrictions {
@@ -261,13 +252,16 @@ resource "aws_cloudfront_distribution" "example_distribution" {
   origin {
     domain_name = aws_s3_bucket.finsemble.bucket_regional_domain_name
     origin_id   = local.example_bucket_name
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.example_origin_access_identity.cloudfront_access_identity_path
+    }
   }
 
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = [format("%s.%s", "web", var.domain_name)]
+  aliases = [format("%s.%s", "simple-app", var.domain_name)]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -292,12 +286,6 @@ resource "aws_cloudfront_distribution" "example_distribution" {
     geo_restriction {
       restriction_type = "whitelist"
       locations        = ["US", "CA", "GB", "DE"]
-    }
-  }
-
-  origin {
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.example_origin_access_identity.cloudfront_access_identity_path
     }
   }
 
