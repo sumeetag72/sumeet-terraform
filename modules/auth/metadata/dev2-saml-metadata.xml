@@ -1,0 +1,23 @@
+<EntityDescriptor ID="SM131094aae28f2cb1a18f12be2be05911d7bcdbfd267" entityID="https://my.qa1.globallink.com/glawssh474f5702glqa1" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    <IDPSSODescriptor WantAuthnRequestsSigned="false" ID="SMff3f74b5194176228fe2beaf243ad0359308102a4e" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <KeyDescriptor use="signing">
+            <ns1:KeyInfo Id="SM292c09e3a9ad4cbe7ea412aa2140efae34bdd0e88d" xmlns:ns1="http://www.w3.org/2000/09/xmldsig#">
+                <ns1:X509Data>
+                    <ns1:X509IssuerSerial>
+                        <ns1:X509IssuerName>CN=glseahorsessadev1glqa1,OU=SSOProvider,O=Global Link,L=Boston,ST=Massachusetts,C=US</ns1:X509IssuerName>
+                        <ns1:X509SerialNumber>345118500</ns1:X509SerialNumber>
+                    </ns1:X509IssuerSerial>
+                    <ns1:X509Certificate>MIIDhDCCAmygAwIBAgIEFJIXJDANBgkqhkiG9w0BAQsFADCBgzELMAkGA1UEBhMCVVMxFjAUBgNVBAgTDU1hc3NhY2h1c2V0dHMxDzANBgNVBAcTBkJvc3RvbjEUMBIGA1UEChMLR2xvYmFsIExpbmsxFDASBgNVBAsTC1NTT1Byb3ZpZGVyMR8wHQYDVQQDExZnbHNlYWhvcnNlc3NhZGV2MWdscWExMB4XDTIwMTIwODE4MTUwMFoXDTMwMTIwNjE4MTUwMFowgYMxCzAJBgNVBAYTAlVTMRYwFAYDVQQIEw1NYXNzYWNodXNldHRzMQ8wDQYDVQQHEwZCb3N0b24xFDASBgNVBAoTC0dsb2JhbCBMaW5rMRQwEgYDVQQLEwtTU09Qcm92aWRlcjEfMB0GA1UEAxMWZ2xzZWFob3JzZXNzYWRldjFnbHFhMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJzjxYsUpRc/1wnvvaz2yIPMfFHuM5mO5/wSzVHADqUuvAtCr368HAKKWQ5PxZtV+QtVJ4PzmobuNMsj+ED92gqfH5G0QclHx4EPLshI1zUkkYo2lHuFkALE/82FOaQFmcc+TYXrsfdoj0N7VIp3SuXWXjwquH0cMNSOlCUYBZViHe+aFzM9KF//qs0mV5CX+gYLgn7jT3GYymLVEFRNHX3eBSsDS9tmIw7ypQnPgQG7iLwyESlmBD2gnALPUSDpZ/guuxw27AKqiPz3MPffZFOGvyI0zS8eNL3OxbPx1fa4yx+j1gOtO6NiDJj609nO9+4xIdPJZbSrShgeCuGSvK0CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAffbmNfxsOYb6cXQIwLltI23+YuMCge9ad4I+wUizajTywIgTrn7VXeaW3Vwfj1u5L6/9YSWPO+k2xbcV4FS/YZclkNu7hY7eTuB5czJQzZuVrLQkWBnqhfzE4fZmcx522ooGJnWezBJMblO0vCQhVTWb3A3bVUQ2bVe/ymoQf5lqEITfxLBsL+c8Q1E8+jivHqcqHuL/P+McH3odhx1AWpCztU62uOgAau882FrxsvqGvtV/Jc3flNw0ijH35FH2l98lyfj30o2ZLPZlYrYgQt47YfM+GNpMgrKCaiRSyvclm+xL9GE0MNITZGcNvlkd4WvcwTCdhGtogiq5mUx48Q==</ns1:X509Certificate>
+                    <ns1:X509SubjectName>CN=glseahorsessadev1glqa1,OU=SSOProvider,O=Global Link,L=Boston,ST=Massachusetts,C=US</ns1:X509SubjectName>
+                </ns1:X509Data>
+            </ns1:KeyInfo>
+        </KeyDescriptor>
+        <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://my.qa1.globallink.com/affwebservices/public/saml2sso?SPID=https://gl-seahorse.auth.us-east-1.amazoncognito.com"/>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://my.qa1.globallink.com/affwebservices/public/saml2sso?SPID=https://gl-seahorse.auth.us-east-1.amazoncognito.com"/>
+        <ns2:Attribute Name="givenname" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified" xmlns:ns2="urn:oasis:names:tc:SAML:2.0:assertion"/>
+        <ns3:Attribute Name="surname" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified" xmlns:ns3="urn:oasis:names:tc:SAML:2.0:assertion"/>
+        <ns4:Attribute Name="emailaddress" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified" xmlns:ns4="urn:oasis:names:tc:SAML:2.0:assertion"/>
+        <ns5:Attribute Name="name" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified" xmlns:ns5="urn:oasis:names:tc:SAML:2.0:assertion"/>
+    </IDPSSODescriptor>
+</EntityDescriptor>
