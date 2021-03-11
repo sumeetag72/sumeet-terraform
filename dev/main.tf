@@ -52,6 +52,17 @@ module "admin_lambdas" {
   aws_account_id = var.aws_account_id
 }
 
+/* module "auth" {
+  source = "../modules/auth"
+  environment = var.environment
+  idp-name = var.idp-name
+  user-pool-client-redirect-urls = var.user-pool-client-redirect-urls
+  user-pool-client-logout-urls = var.user-pool-client-logout-urls
+  deploy_auth   = var.deploy_auth
+  domain_name = var.domain_name
+  acm_certificate_arn = module.acm.acm_certificate_arn
+} */
+
 module "web_admin_api" {
   source = "../modules/web-admin-api"
   aws_account_id = var.aws_account_id
@@ -62,6 +73,9 @@ module "web_admin_api" {
   delete_component_lambda_name = var.delete_component_lambda_name
   domain_name = var.domain_name
   acm_certificate_arn = module.acm.acm_certificate_arn
+  depends_on = [
+    module.admin_lambdas, module.auth
+  ]
 }
 
 module "web_backend_api_with_existing_cognito" {
@@ -74,21 +88,13 @@ module "web_backend_api_with_existing_cognito" {
   user_pool_arn = var.user_pool_arn
   domain_name = var.domain_name
   acm_certificate_arn = module.acm.acm_certificate_arn
+  depends_on = [
+    module.admin_lambdas, module.auth
+  ]
 }
 
-/* module "auth" {
-  source = "../modules/auth"
-  environment = var.environment
-  idp-name = var.idp-name
-  user-pool-client-redirect-urls = var.user-pool-client-redirect-urls
-  user-pool-client-logout-urls = var.user-pool-client-logout-urls
-  deploy_auth   = var.deploy_auth
-  domain_name = var.domain_name
-  acm_certificate_arn = module.acm.acm_certificate_arn
-} */
+/* module "web_backend_api_with_fresh_auth_setup" {
 
-module "web_backend_api_with_fresh_auth_setup" {
-  count   = var.deploy_auth ? 1 : 0
   source = "../modules/web-backend-api"
   aws_account_id = var.aws_account_id
   region = var.region
@@ -98,9 +104,9 @@ module "web_backend_api_with_fresh_auth_setup" {
   domain_name = var.domain_name
   acm_certificate_arn = module.acm.acm_certificate_arn
   depends_on = [
-    module.auth
+    module.admin_lambdas, module.auth
   ]
-}
+} */
 
 module "route53_setup" {
   source = "../modules/route53"
@@ -111,9 +117,11 @@ module "route53_setup" {
   storybook_cdn_domain_name = module.web_static.storybook_cdn_domain_name
   docusaurus_cdn_domain_name = module.web_static.docusaurus_cdn_domain_name
   example_cdn_domain_name = module.web_static.example_cdn_domain_name
+  web_api_zone_id = module.web_backend_api_with_fresh_auth_setup.zone_id
   web_api_cdn_domain_name = module.web_backend_api_with_fresh_auth_setup.domain_name
+  admin_api_zone_id = module.web_admin_api.zone_id
   admin_api_cdn_domain_name = module.web_admin_api.domain_name
-  cognito_cdn_domain_name = module.auth.domain_name
+  cognito_cdn_domain_name = module.auth.domain_name[0]
   depends_on = [
     module.auth, module.web_admin_api, module.admin_lambdas, module.web_static
   ]
