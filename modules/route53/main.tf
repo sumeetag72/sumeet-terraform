@@ -10,24 +10,24 @@ locals {
 
 resource "aws_route53_record" "finsemble" {
   zone_id = var.hosted_zone_id
-  name = local.finsemble_cdn_domain_name
+  name = local.finsemble_domain
   type = "A"
 
   alias {
     name = var.finsemble_cdn_domain_name
-    zone_id = var.hosted_zone_id
+    zone_id = "Z2FDTNDATAQYW2"
     evaluate_target_health = true
   }
 }
 
 resource "aws_route53_record" "storybook" {
   zone_id = var.hosted_zone_id
-  name = local.storybook_cdn_domain_name
+  name = local.storybook_domain
   type = "A"
 
   alias {
     name = var.storybook_cdn_domain_name
-    zone_id = var.hosted_zone_id
+    zone_id = "Z2FDTNDATAQYW2"
     evaluate_target_health = true
   }
 }
@@ -39,7 +39,7 @@ resource "aws_route53_record" "docusaurus" {
 
   alias {
     name = var.docusaurus_cdn_domain_name
-    zone_id = var.hosted_zone_id
+    zone_id = "Z2FDTNDATAQYW2"
     evaluate_target_health = true
   }
 }
@@ -51,7 +51,7 @@ resource "aws_route53_record" "example-app" {
 
   alias {
     name = var.example_cdn_domain_name
-    zone_id = var.hosted_zone_id
+    zone_id = "Z2FDTNDATAQYW2"
     evaluate_target_health = true
   }
 }
@@ -63,7 +63,7 @@ resource "aws_route53_record" "admin-api" {
 
   alias {
     name = var.admin_api_cdn_domain_name
-    zone_id = var.hosted_zone_id
+    zone_id = var.admin_api_zone_id
     evaluate_target_health = true
   }
 }
@@ -75,7 +75,7 @@ resource "aws_route53_record" "web-api" {
 
   alias {
     name = var.web_api_cdn_domain_name
-    zone_id = var.hosted_zone_id
+    zone_id =  var.web_api_zone_id
     evaluate_target_health = true
   }
 }
@@ -87,7 +87,7 @@ resource "aws_route53_record" "auth" {
 
   alias {
     name = var.cognito_cdn_domain_name
-    zone_id = var.hosted_zone_id
+    zone_id = "Z2FDTNDATAQYW2"
     evaluate_target_health = true
   }
 }

@@ -38,7 +38,17 @@ variable "web_api_cdn_domain_name" {
   default = null
 }
 
-variable "cli_api_cdn_domain_name" {
+variable "admin_api_cdn_domain_name" {
+  type    = string
+  default = null
+}
+
+variable "web_api_zone_id" {
+  type    = string
+  default = null
+}
+
+variable "admin_api_zone_id" {
   type    = string
   default = null
 }
