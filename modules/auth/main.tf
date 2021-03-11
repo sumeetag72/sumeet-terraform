@@ -28,10 +28,15 @@ resource "aws_cognito_user_pool_client" "seahorse_web_client" {
   ]
 }
 
-resource "aws_cognito_user_pool_domain" "seahorse_auth_domain" {
+resource "aws_cognito_user_pool_domain" "domain" {
   count   = var.deploy_auth ? 1 : 0
-  domain       = format("%s-globallink", var.environment)
-  user_pool_id = aws_cognito_user_pool.seahorse_user_pool[count.index].id
+  domain          = var.domain_name
+  certificate_arn = var.acm_certificate_arn
+  user_pool_id    = aws_cognito_user_pool.seahorse_user_pool[count.index].id
+
+  depends_on = [
+    aws_cognito_identity_provider.identity_provider_sso
+  ]
 }
 
 resource "aws_cognito_identity_pool" "seahorse_identity_pool" {
@@ -102,15 +107,4 @@ resource "aws_cognito_identity_provider" "identity_provider_sso" {
 output "user_pool_arn" {
   description = "ARN of the user pool"
   value       = join("", aws_cognito_user_pool.seahorse_user_pool[*].arn)
-}
-
-resource "aws_cognito_user_pool_domain" "domain" {
-  count   = var.deploy_auth ? 1 : 0
-  domain          = var.domain_name
-  certificate_arn = var.acm_certificate_arn
-  user_pool_id    = aws_cognito_user_pool.seahorse_user_pool[count.index].id
-
-  depends_on = [
-    aws_cognito_identity_provider.identity_provider_sso
-  ]
 }
