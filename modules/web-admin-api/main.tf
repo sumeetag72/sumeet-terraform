@@ -263,26 +263,18 @@ resource "aws_lambda_permission" "admin-delete-lambda-permission" {
 }
 
 ############################ ATTACH DOMAIN ####################################
-resource "aws_api_gateway_stage" "admin_api_stage" {
-  deployment_id = aws_api_gateway_deployment.admin_api_deployment.id
-  rest_api_id   = aws_api_gateway_rest_api.admin_api.id
-  stage_name    = var.environment
-  depends_on = [
-    aws_api_gateway_deployment.admin_api_deployment
-  ]
-}
 
 resource "aws_api_gateway_domain_name" "admin_api_domain_name" {
   domain_name = format("%s.%s", "adminapi", var.domain_name)
   certificate_arn = var.acm_certificate_arn
   depends_on = [
-    aws_api_gateway_stage.admin_api_stage
+    aws_api_gateway_deployment.admin_api_deployment
   ]
 }
 
 resource "aws_api_gateway_base_path_mapping" "admin_api_path_mapping" {
   api_id      = aws_api_gateway_rest_api.admin_api.id
-  stage_name  = aws_api_gateway_stage.admin_api_stage.stage_name
+  stage_name  = aws_api_gateway_deployment.admin_api_deployment.stage_name
   domain_name = aws_api_gateway_domain_name.admin_api_domain_name.domain_name
   depends_on = [
     aws_api_gateway_domain_name.admin_api_domain_name
