@@ -52,16 +52,17 @@ module "admin_lambdas" {
   aws_account_id = var.aws_account_id
 }
 
-module "auth" {
-  source = "../modules/auth"
-  environment = var.environment
-  idp-name = var.idp-name
-  user-pool-client-redirect-urls = var.user-pool-client-redirect-urls
-  user-pool-client-logout-urls = var.user-pool-client-logout-urls
-  deploy_auth   = var.deploy_auth
-  domain_name = var.domain_name
-  acm_certificate_arn = module.acm.acm_certificate_arn
-}
+# module "auth" {
+#   count   = var.deploy_auth ? 0 : 1
+#   source = "../modules/auth"
+#   environment = var.environment
+#   idp-name = var.idp-name
+#   user-pool-client-redirect-urls = var.user-pool-client-redirect-urls
+#   user-pool-client-logout-urls = var.user-pool-client-logout-urls
+#   deploy_auth   = var.deploy_auth
+#   domain_name = var.domain_name
+#   acm_certificate_arn = module.acm.acm_certificate_arn
+# }
 
 module "web_admin_api" {
   source = "../modules/web-admin-api"
