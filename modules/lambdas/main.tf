@@ -17,55 +17,94 @@ resource "aws_iam_role" "seahorse_iam_role_for_lambdas" {
 EOF
 }
 
-resource "aws_iam_policy" "seahorse_admin_lambdas_exec_policy" {
+resource "aws_iam_policy" "create_definition_lambdas_exec_policy" {
   name = "seahorse_admin_lambdas_exec_policy"
-  policy = templatefile("${path.module}/policy/admin-lambda-policy.tpl", {
-    register_component_lambda_name = var.register-component-lambda-name
+  policy = templatefile("${path.module}/policy/lambda-policy.tpl", {
+    lambda_name = var.register-component-lambda-name
     aws_account_id = var.aws_account_id
   })
 }
 
-resource "aws_iam_policy" "seahorse_get_lambdas_exec_policy" {
-  name = "seahorse_get_lambdas_exec_policy"
-  policy = templatefile("${path.module}/policy/admin-lambda-policy.tpl", {
-    register_component_lambda_name = var.get-components-lambda-name
+resource "aws_iam_policy" "get_definition_lambda_exec_policy" {
+  name = "get_definition_lambda_exec_policy"
+  policy = templatefile("${path.module}/policy/lambda-policy.tpl", {
+    lambda_name = var.get-components-lambda-name
     aws_account_id = var.aws_account_id
   })
 }
 
-resource "aws_iam_policy" "seahorse_delete_lambdas_exec_policy" {
-  name = "seahorse_delete_lambdas_exec_policy"
-  policy = templatefile("${path.module}/policy/admin-lambda-policy.tpl", {
-    register_component_lambda_name = var.delete-components-lambda-name
+resource "aws_iam_policy" "delete_definition_lambdas_exec_policy" {
+  name = "delete_definition_lambdas_exec_policy"
+  policy = templatefile("${path.module}/policy/lambda-policy.tpl", {
+    lambda_name = var.delete-components-lambda-name
     aws_account_id = var.aws_account_id
   })
 }
 
-resource "aws_iam_role_policy_attachment" "admin_lambda_dynamodb" {
+resource "aws_iam_policy" "create_preference_lambdas_exec_policy" {
+  name = "create_preference_lambdas_exec_policy"
+  policy = templatefile("${path.module}/policy/lambda-policy.tpl", {
+    lambda_name = var.create-preference-lambda-name
+    aws_account_id = var.aws_account_id
+  })
+}
+
+resource "aws_iam_policy" "get_preference_lambda_exec_policy" {
+  name = "get_preference_lambda_exec_policy"
+  policy = templatefile("${path.module}/policy/lambda-policy.tpl", {
+    lambda_name = var.get-preference-lambda-name
+    aws_account_id = var.aws_account_id
+  })
+}
+
+resource "aws_iam_policy" "delete_preference_lambdas_exec_policy" {
+  name = "delete_preference_lambdas_exec_policy"
+  policy = templatefile("${path.module}/policy/lambda-policy.tpl", {
+    lambda_name = var.delete-preference-lambda-name
+    aws_account_id = var.aws_account_id
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_dynamodb" {
   role       = aws_iam_role.seahorse_iam_role_for_lambdas.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
 
-resource "aws_iam_role_policy_attachment" "admin_register_lambda_exec" {
+resource "aws_iam_role_policy_attachment" "register_definition_exec" {
   role       = aws_iam_role.seahorse_iam_role_for_lambdas.name
-  policy_arn = aws_iam_policy.seahorse_admin_lambdas_exec_policy.arn
+  policy_arn = aws_iam_policy.create_definition_lambdas_exec_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "admin_get_lambda_exec" {
+resource "aws_iam_role_policy_attachment" "get_definition_exec" {
   role       = aws_iam_role.seahorse_iam_role_for_lambdas.name
-  policy_arn = aws_iam_policy.seahorse_get_lambdas_exec_policy.arn
+  policy_arn = aws_iam_policy.get_definition_lambda_exec_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "admin_delete_lambda_exec" {
+resource "aws_iam_role_policy_attachment" "delete_definition_exec" {
   role       = aws_iam_role.seahorse_iam_role_for_lambdas.name
-  policy_arn = aws_iam_policy.seahorse_delete_lambdas_exec_policy.arn
+  policy_arn = aws_iam_policy.delete_definition_lambdas_exec_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "create_preference_exec" {
+  role       = aws_iam_role.seahorse_iam_role_for_lambdas.name
+  policy_arn = aws_iam_policy.create_preference_lambdas_exec_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "get_preference_exec" {
+  role       = aws_iam_role.seahorse_iam_role_for_lambdas.name
+  policy_arn = aws_iam_policy.get_preference_lambda_exec_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "delete_preference_exec" {
+  role       = aws_iam_role.seahorse_iam_role_for_lambdas.name
+  policy_arn = aws_iam_policy.delete_preference_lambdas_exec_policy.arn
 }
 
 resource "aws_lambda_function" "RegisterComponentLambda" {
-  filename      = "../../seahorse/server/app.adminservices/target/adminservices-1.0.jar"
+  filename      = "../../seahorse/server/app.services/target/adminservices-1.0.jar"
   function_name = var.register-component-lambda-name
   role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
-  handler       = "com.globallink.admin.fsbl.RegisterComponentService::handleRequest"
+  handler       = "com.globallink.services.components.RegisterComponentService::handleRequest"
 
   runtime = "java8"
   memory_size = "4096"
@@ -81,10 +120,10 @@ resource "aws_lambda_function" "RegisterComponentLambda" {
 }
 
 resource "aws_lambda_function" "GetRegisteredComponents" {
-  filename      = "../../seahorse/server/app.adminservices/target/adminservices-1.0.jar"
+  filename      = "../../seahorse/server/app.services/target/adminservices-1.0.jar"
   function_name = var.get-components-lambda-name
   role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
-  handler       = "com.globallink.admin.fsbl.GetComponentService::handleRequest"
+  handler       = "com.globallink.services.components.GetComponentService::handleRequest"
 
   runtime = "java8"
   memory_size = "4096"
@@ -100,10 +139,10 @@ resource "aws_lambda_function" "GetRegisteredComponents" {
 }
 
 resource "aws_lambda_function" "DeleteRegisteredComponent" {
-  filename      = "../../seahorse/server/app.adminservices/target/adminservices-1.0.jar"
+  filename      = "../../seahorse/server/app.services/target/adminservices-1.0.jar"
   function_name = var.delete-components-lambda-name
   role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
-  handler       = "com.globallink.admin.fsbl.DeleteComponentService::handleRequest"
+  handler       = "com.globallink.services.components.DeleteComponentService::handleRequest"
 
   runtime = "java8"
   memory_size = "4096"
@@ -118,26 +157,83 @@ resource "aws_lambda_function" "DeleteRegisteredComponent" {
   }
 }
 
-resource "aws_cloudwatch_event_rule" "one_minute_ping" {
-  name                = "one_minute_ping"
-  description         = "Pings every one minute"
+resource "aws_lambda_function" "CreatePreferenceLambda" {
+  filename      = "../../seahorse/server/app.services/target/adminservices-1.0.jar"
+  function_name = var.create-preference-lambda-name
+  role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
+  handler       = "com.globallink.services.preference.CreateUserPreferenceService::handleRequest"
+
+  runtime = "java8"
+  memory_size = "4096"
+  timeout = "15"
+
+  publish = true
+
+  environment {
+    variables = {
+      environment = var.environment
+    }
+  }
+}
+
+resource "aws_lambda_function" "GetPreferenceLambda" {
+  filename      = "../../seahorse/server/app.services/target/adminservices-1.0.jar"
+  function_name = var.get-preference-lambda-name
+  role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
+  handler       = "com.globallink.services.preference.GetUserPreferenceService::handleRequest"
+
+  runtime = "java8"
+  memory_size = "4096"
+  timeout = "15"
+
+  publish = true
+
+  environment {
+    variables = {
+      environment = var.environment
+    }
+  }
+}
+
+resource "aws_lambda_function" "DeletePreferenceLambda" {
+  filename      = "../../seahorse/server/app.services/target/adminservices-1.0.jar"
+  function_name = var.delete-preference-lambda-name
+  role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
+  handler       = "com.globallink.services.preference.DeleteUserPreferenceService::handleRequest"
+
+  runtime = "java8"
+  memory_size = "4096"
+  timeout = "15"
+
+  publish = true
+
+  environment {
+    variables = {
+      environment = var.environment
+    }
+  }
+}
+
+resource "aws_cloudwatch_event_rule" "app_definition_ping" {
+  name                = "app_definition_ping"
+  description         = "Pings app definition lambdas every one minute"
   schedule_expression = "rate(1 minute)"
 }
 
-resource "aws_cloudwatch_event_target" "ping_register_lambda_every_one_minute" {
-  rule      = aws_cloudwatch_event_rule.one_minute_ping.name
+resource "aws_cloudwatch_event_target" "ping_register_lambda" {
+  rule      = aws_cloudwatch_event_rule.app_definition_ping.name
   target_id = "register-ping"
   arn       = aws_lambda_function.RegisterComponentLambda.arn
 }
 
-resource "aws_cloudwatch_event_target" "ping_get_lambda_every_one_minute" {
-  rule      = aws_cloudwatch_event_rule.one_minute_ping.name
+resource "aws_cloudwatch_event_target" "ping_get_lambda" {
+  rule      = aws_cloudwatch_event_rule.app_definition_ping.name
   target_id = "get-ping"
   arn       = aws_lambda_function.GetRegisteredComponents.arn
 }
 
-resource "aws_cloudwatch_event_target" "ping_delete_lambda_every_one_minute" {
-  rule      = aws_cloudwatch_event_rule.one_minute_ping.name
+resource "aws_cloudwatch_event_target" "ping_delete_lambda" {
+  rule      = aws_cloudwatch_event_rule.app_definition_ping.name
   target_id = "delete-ping"
   arn       = aws_lambda_function.DeleteRegisteredComponent.arn
 }
@@ -164,4 +260,52 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_ping_delete_lambda" {
   function_name = aws_lambda_function.DeleteRegisteredComponent.function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.one_minute_ping.arn
+}
+
+resource "aws_cloudwatch_event_rule" "user_preference_ping" {
+  name                = "user_preference_ping"
+  description         = "Pings user preference lambdas every one minute"
+  schedule_expression = "rate(1 minute)"
+}
+
+resource "aws_cloudwatch_event_target" "ping_create_preference_lambda" {
+  rule      = aws_cloudwatch_event_rule.user_preference_ping.name
+  target_id = "create-preference-ping"
+  arn       = aws_lambda_function.CreatePreferenceLambda.arn
+}
+
+resource "aws_cloudwatch_event_target" "ping_get_preference" {
+  rule      = aws_cloudwatch_event_rule.user_preference_ping.name
+  target_id = "get-preference"
+  arn       = aws_lambda_function.GetPreferenceLambda.arn
+}
+
+resource "aws_cloudwatch_event_target" "ping_delete_preference" {
+  rule      = aws_cloudwatch_event_rule.user_preference_ping.name
+  target_id = "delete-preference"
+  arn       = aws_lambda_function.DeletePreferenceLambda.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_ping_preference_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.CreatePreferenceLambda.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.user_preference_ping.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_ping_get_preference_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.GetPreferenceLambda.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.user_preference_ping.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_ping_delete_preference_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.DeletePreferenceLambda.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.user_preference_ping.arn
 }

@@ -18,6 +18,21 @@ variable "delete-components-lambda-name" {
   default = null
 }
 
+variable "create-preference-lambda-name" {
+  type    = string
+  default = null
+}
+
+variable "get-preference-lambda-name" {
+  type    = string
+  default = null
+}
+
+variable "delete-preference-lambda-name" {
+  type    = string
+  default = null
+}
+
 variable "aws_account_id" {
   type    = string
   default = null
