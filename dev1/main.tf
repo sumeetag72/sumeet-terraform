@@ -39,7 +39,8 @@ module "dynamo_db" {
   source = "../modules/dynamodb"
 
   environment = var.environment
-  table_name = var.dynamo_admin_table_name
+  app_definitions_table_name = var.app_definitions_table_name
+  user_preferences_table_name = var.user_preferences_table_name
 }
 
 module "admin_lambdas" {
