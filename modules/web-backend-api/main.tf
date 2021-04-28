@@ -6,12 +6,6 @@ resource "aws_api_gateway_rest_api" "web_backend_api" {
   }
 }
 
-resource "aws_api_gateway_resource" "web_backend_api_resource" {
-  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
-  parent_id = aws_api_gateway_rest_api.web_backend_api.root_resource_id
-  path_part = "{proxy+}"
-}
-
 resource "aws_api_gateway_authorizer" "web_authorizer" {
 name          = "Seahorse-Authorizer"
 type          = "COGNITO_USER_POOLS"
@@ -19,7 +13,15 @@ rest_api_id   = aws_api_gateway_rest_api.web_backend_api.id
 provider_arns = [var.user_pool_arn]
 }
 
-############################################### GET COMPONENTS ##############################################
+############################################### COMPONENTS API ######################################
+
+resource "aws_api_gateway_resource" "web_backend_api_resource" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  parent_id = aws_api_gateway_rest_api.web_backend_api.root_resource_id
+  path_part = "{proxy+}"
+}
+
+
 
 resource "aws_api_gateway_method" "web_backend_api_get_method" {
   rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
@@ -69,8 +71,8 @@ resource "aws_api_gateway_integration_response" "web_backend_api_get_integration
   ]
 }
 
-###############################################CORS + OPTIONS##################################################
 
+#######################################################################################
 resource "aws_api_gateway_method" "mock_options_method" {
   rest_api_id   = aws_api_gateway_rest_api.web_backend_api.id
   resource_id   = aws_api_gateway_resource.web_backend_api_resource.id
@@ -117,6 +119,306 @@ resource "aws_api_gateway_integration_response" "mock_options_integration_respon
   }
 }
 
+
+############################################### PREFERENCES API GET ALL ######################################
+
+resource "aws_api_gateway_resource" "preferences_api_get_all_resource" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  parent_id = aws_api_gateway_rest_api.web_backend_api.root_resource_id
+  path_part = "/storage/api/app/{userId}/{app}"
+}
+
+
+resource "aws_api_gateway_method" "preferences_api_get_all_method" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_get_all_resource.id
+  http_method = "GET"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.web_authorizer.id
+  request_parameters = {
+    "method.request.header.Content-Type" = true
+  }
+  request_models = { 
+    "application/json" = "Empty" 
+  }
+}
+
+resource "aws_api_gateway_integration" "preferences_api_get_all_method_integration" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_get_all_resource.id
+  http_method = aws_api_gateway_method.preferences_api_get_all_method.http_method
+  type = "AWS_PROXY"
+  uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.aws_account_id}:function:${var.get-preference-lambda-name}/invocations"
+  integration_http_method = "POST"
+}
+
+resource "aws_api_gateway_method_response" "preferences_api_get_all_method_response" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_get_all_resource.id
+  http_method = aws_api_gateway_method.preferences_api_get_all_method.http_method
+  status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true,
+  }
+}
+
+resource "aws_api_gateway_integration_response" "preferences_get_all_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_get_all_resource.id
+  http_method = aws_api_gateway_method.preferences_api_get_all_method.http_method
+  status_code = aws_api_gateway_method_response.preferences_api_get_all_method_response.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'", # r# will be cloudfront host when available
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.preferences_api_get_all_method_integration
+  ]
+}
+
+resource "aws_api_gateway_method" "get_all_options_method" {
+  rest_api_id   = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id   = aws_api_gateway_resource.preferences_api_get_all_resource.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "get_all_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_get_all_resource.id
+  http_method = aws_api_gateway_method.get_all_options_method.http_method
+  type = "MOCK"
+  request_templates = {               
+    "application/json" = file("${path.module}/templates/mapping-template.json")
+  }
+}
+
+resource "aws_api_gateway_method_response" "get_all_options_response" {
+  depends_on = [aws_api_gateway_method.get_all_options_method]
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_get_all_resource.id
+  http_method = aws_api_gateway_method.get_all_options_method.http_method
+  status_code = 200
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Headers" = true
+  }
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
+resource "aws_api_gateway_integration_response" "get_all_options_integration_response" {
+  depends_on = [aws_api_gateway_integration.get_all_options_integration, aws_api_gateway_method_response.get_all_options_response]
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_get_all_resource.id
+  http_method = aws_api_gateway_method.get_all_options_method.http_method
+  status_code = 200
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'", # replace with hostname of frontend (CloudFront)
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Methods" = "'GET, OPTIONS, POST'" # remove or add HTTP methods as needed
+  }
+}
+
+############################################### PREFERENCES API ######################################
+
+resource "aws_api_gateway_resource" "preferences_api_resource" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  parent_id = aws_api_gateway_rest_api.web_backend_api.root_resource_id
+  path_part = "/storage/api/app/{userId}/{app}/{preferenceId}"
+}
+
+resource "aws_api_gateway_method" "preferences_api_get_method" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = "GET"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.web_authorizer.id
+  request_parameters = {
+    "method.request.header.Content-Type" = true
+  }
+  request_models = { 
+    "application/json" = "Empty" 
+  }
+}
+
+resource "aws_api_gateway_integration" "preferences_api_get_method_integration" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = aws_api_gateway_method.preferences_api_get_method.http_method
+  type = "AWS_PROXY"
+  uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.aws_account_id}:function:${var.get-preference-lambda-name}/invocations"
+  integration_http_method = "POST"
+}
+
+resource "aws_api_gateway_method_response" "preferences_api_get_method_response" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = aws_api_gateway_method.preferences_api_get_method.http_method
+  status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true,
+  }
+}
+
+resource "aws_api_gateway_integration_response" "preferences_get_all_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = aws_api_gateway_method.preferences_api_get_method.http_method
+  status_code = aws_api_gateway_method_response.preferences_api_get_method_response.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'", # r# will be cloudfront host when available
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.preferences_api_get_method_integration
+  ]
+}
+
+resource "aws_api_gateway_method" "preferences_api_create_method" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = "POST"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.web_authorizer.id
+  request_parameters = {
+    "method.request.header.Content-Type" = true
+  }
+  request_models = { 
+    "application/json" = "Empty" 
+  }
+}
+
+resource "aws_api_gateway_integration" "preferences_api_create_method_integration" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = aws_api_gateway_method.preferences_api_create_method.http_method
+  type = "AWS_PROXY"
+  uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.aws_account_id}:function:${var.create-preference-lambda-name}/invocations"
+  integration_http_method = "POST"
+}
+
+resource "aws_api_gateway_method_response" "preferences_api_create_method_response" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = aws_api_gateway_method.preferences_api_create_method.http_method
+  status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true,
+  }
+}
+
+resource "aws_api_gateway_integration_response" "preferences_api_create_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = aws_api_gateway_method.preferences_api_create_method.http_method
+  status_code = aws_api_gateway_method_response.preferences_api_create_method_response.status_code
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'", # will be cloudfront host when available
+  }
+  depends_on = [
+    aws_api_gateway_integration.admin_api_register_method_integration
+  ]
+}
+
+resource "aws_api_gateway_method" "preferences_api_delete_method" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = "DELETE"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.web_authorizer.id
+  request_parameters = {
+    "method.request.header.Content-Type" = true
+  }
+  request_models = { 
+    "application/json" = "Empty" 
+  }
+}
+
+resource "aws_api_gateway_integration" "preferences_api_delete_method_integration" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = aws_api_gateway_method.preferences_api_delete_method.http_method
+  type = "AWS_PROXY"
+  uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.aws_account_id}:function:${var.delete-preference-lambda-name}/invocations"
+  integration_http_method = "POST"
+}
+
+resource "aws_api_gateway_method_response" "preferences_api_delete_method_response" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = aws_api_gateway_method.preferences_api_delete_method.http_method
+  status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true,
+  }
+}
+
+resource "aws_api_gateway_integration_response" "preferences_api_delete_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = aws_api_gateway_method.preferences_api_delete_method.http_method
+  status_code = aws_api_gateway_method_response.preferences_api_delete_method_response.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'", # r# will be cloudfront host when available
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.preferences_api_delete_method_integration
+  ]
+}
+
+resource "aws_api_gateway_method" "get_options_method" {
+  rest_api_id   = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id   = aws_api_gateway_resource.preferences_api_resource.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "get_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = aws_api_gateway_method.get_options_method.http_method
+  type = "MOCK"
+  request_templates = {               
+    "application/json" = file("${path.module}/templates/mapping-template.json")
+  }
+}
+
+resource "aws_api_gateway_method_response" "get_options_response" {
+  depends_on = [aws_api_gateway_method.get_options_method]
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = aws_api_gateway_method.get_options_method.http_method
+  status_code = 200
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Headers" = true
+  }
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
+resource "aws_api_gateway_integration_response" "get_options_integration_response" {
+  depends_on = [aws_api_gateway_integration.get_options_integration, aws_api_gateway_method_response.get_options_response]
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  resource_id = aws_api_gateway_resource.preferences_api_resource.id
+  http_method = aws_api_gateway_method.get_options_method.http_method
+  status_code = 200
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'", # replace with hostname of frontend (CloudFront)
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Methods" = "'GET, OPTIONS, POST'" # remove or add HTTP methods as needed
+  }
+}
+
 ############################################### DEPLOY ##############################################
 
 resource "aws_api_gateway_deployment" "web_backend_api_deployment" {
@@ -134,10 +436,36 @@ resource "aws_api_gateway_deployment" "web_backend_api_deployment" {
   stage_name = var.environment
 }
 
+############################ LAMBDA PERMISSIONS ####################################
+
 resource "aws_lambda_permission" "get-lambda-permission" {
   statement_id = "AllowWebBackendAPIGatewayInvokeGet"
   action = "lambda:InvokeFunction"
   function_name = var.get_components_lambda_name
+  principal = "apigateway.amazonaws.com"
+  source_arn = "${aws_api_gateway_rest_api.web_backend_api.execution_arn}/*/*/*"
+}
+
+resource "aws_lambda_permission" "create-preference-lambda-permission" {
+  statement_id = "AllowWebBackendAPIGatewayInvokeGet"
+  action = "lambda:InvokeFunction"
+  function_name = var.create-preference-lambda-name
+  principal = "apigateway.amazonaws.com"
+  source_arn = "${aws_api_gateway_rest_api.web_backend_api.execution_arn}/*/*/*"
+}
+
+resource "aws_lambda_permission" "get-preference-lambda-permission" {
+  statement_id = "AllowWebBackendAPIGatewayInvokeGet"
+  action = "lambda:InvokeFunction"
+  function_name = var.get-preference-lambda-name
+  principal = "apigateway.amazonaws.com"
+  source_arn = "${aws_api_gateway_rest_api.web_backend_api.execution_arn}/*/*/*"
+}
+
+resource "aws_lambda_permission" "delete-preference-lambda-permission" {
+  statement_id = "AllowWebBackendAPIGatewayInvokeGet"
+  action = "lambda:InvokeFunction"
+  function_name = var.delete-preference-lambda-name
   principal = "apigateway.amazonaws.com"
   source_arn = "${aws_api_gateway_rest_api.web_backend_api.execution_arn}/*/*/*"
 }

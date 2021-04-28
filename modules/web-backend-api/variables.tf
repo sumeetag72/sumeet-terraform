@@ -32,3 +32,18 @@ variable "acm_certificate_arn" {
   type    = string
   default = null
 }
+
+variable "create-preference-lambda-name" {
+  type    = string
+  default = null
+}
+
+variable "get-preference-lambda-name" {
+  type    = string
+  default = null
+}
+
+variable "delete-preference-lambda-name" {
+  type    = string
+  default = null
+}
