@@ -23,7 +23,12 @@ variable "project" {
   default = null
 }
 
-variable "dynamo_admin_table_name" {
+variable "app_definitions_table_name" {
+  type    = string
+  default = null
+}
+
+variable "user_preferences_table_name" {
   type    = string
   default = null
 }
