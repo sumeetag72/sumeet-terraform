@@ -1,5 +1,4 @@
 resource "aws_cognito_user_pool" "seahorse_user_pool" {
-  count   = var.deploy_auth ? 1 : 0
   name                = "SeaHorse User Pool"
   username_attributes = ["email"]
 
@@ -9,6 +8,10 @@ resource "aws_cognito_user_pool" "seahorse_user_pool" {
       required            = true
       mutable             = true
     }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_cognito_user_pool_client" "seahorse_web_client" {
@@ -26,6 +29,9 @@ resource "aws_cognito_user_pool_client" "seahorse_web_client" {
   depends_on = [
     aws_cognito_identity_provider.identity_provider_sso
   ]
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_cognito_user_pool_domain" "domain" {
@@ -47,6 +53,9 @@ resource "aws_cognito_identity_pool" "seahorse_identity_pool" {
     client_id               = aws_cognito_user_pool_client.seahorse_web_client[count.index].id
     provider_name           = aws_cognito_user_pool.seahorse_user_pool[count.index].endpoint
     server_side_token_check = false
+  }
+  lifecycle {
+    prevent_destroy = true
   }
 }
 
@@ -101,6 +110,9 @@ resource "aws_cognito_identity_provider" "identity_provider_sso" {
   attribute_mapping = {
     email    = "emailaddress"
     profile = "glauth"
+  }
+  lifecycle {
+    prevent_destroy = true
   }
 }
 
