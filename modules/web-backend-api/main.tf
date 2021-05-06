@@ -122,10 +122,34 @@ resource "aws_api_gateway_integration_response" "mock_options_integration_respon
 
 ############################################### PREFERENCES API GET ALL ######################################
 
-resource "aws_api_gateway_resource" "preferences_api_get_all_resource" {
+resource "aws_api_gateway_resource" "preferences_storage_path_resource" {
   rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
   parent_id = aws_api_gateway_rest_api.web_backend_api.root_resource_id
-  path_part = "/storage/api/app/{userId}/{app}"
+  path_part = "storage"
+}
+
+resource "aws_api_gateway_resource" "preferences_api_path_resource" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  parent_id = aws_api_gateway_resource.preferences_storage_path_resource.id
+  path_part = "api"
+}
+
+resource "aws_api_gateway_resource" "preferences_api_app_resource" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  parent_id = aws_api_gateway_resource.preferences_api_path_resource.id
+  path_part = "app"
+}
+
+resource "aws_api_gateway_resource" "preferences_api_userid_resource" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  parent_id = aws_api_gateway_resource.preferences_api_app_resource.id
+  path_part = "{userId}"
+}
+
+resource "aws_api_gateway_resource" "preferences_api_get_all_resource" {
+  rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
+  parent_id = aws_api_gateway_resource.preferences_api_userid_resource.id
+  path_part = "{app}"
 }
 
 
@@ -227,9 +251,10 @@ resource "aws_api_gateway_integration_response" "get_all_options_integration_res
 
 resource "aws_api_gateway_resource" "preferences_api_resource" {
   rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
-  parent_id = aws_api_gateway_rest_api.web_backend_api.root_resource_id
-  path_part = "/storage/api/app/{userId}/{app}/{preferenceId}"
+  parent_id = aws_api_gateway_resource.preferences_api_get_all_resource.id
+  path_part = "{preferenceId}"
 }
+
 
 resource "aws_api_gateway_method" "preferences_api_get_method" {
   rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
@@ -264,7 +289,7 @@ resource "aws_api_gateway_method_response" "preferences_api_get_method_response"
   }
 }
 
-resource "aws_api_gateway_integration_response" "preferences_get_all_integration_response" {
+resource "aws_api_gateway_integration_response" "preferences_get_integration_response" {
   rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
   resource_id = aws_api_gateway_resource.preferences_api_resource.id
   http_method = aws_api_gateway_method.preferences_api_get_method.http_method
@@ -321,7 +346,7 @@ resource "aws_api_gateway_integration_response" "preferences_api_create_integrat
     "method.response.header.Access-Control-Allow-Origin" = "'*'", # will be cloudfront host when available
   }
   depends_on = [
-    aws_api_gateway_integration.admin_api_register_method_integration
+    aws_api_gateway_integration.preferences_api_create_method_integration
   ]
 }
 
@@ -423,6 +448,10 @@ resource "aws_api_gateway_integration_response" "get_options_integration_respons
 
 resource "aws_api_gateway_deployment" "web_backend_api_deployment" {
   depends_on = [
+    aws_api_gateway_authorizer.web_authorizer,
+    aws_api_gateway_resource.web_backend_api_resource,
+    aws_api_gateway_resource.preferences_api_get_all_resource,
+    aws_api_gateway_resource.preferences_api_resource,
     aws_api_gateway_method.web_backend_api_get_method,
     aws_api_gateway_integration.web_backend_api_get_method_integration,
     aws_api_gateway_method_response.web_backend_api_get_method_response,
@@ -430,7 +459,27 @@ resource "aws_api_gateway_deployment" "web_backend_api_deployment" {
     aws_api_gateway_method.mock_options_method,
     aws_api_gateway_integration.mock_options_integration,
     aws_api_gateway_method_response.mock_options_response,
-    aws_api_gateway_integration_response.mock_options_integration_response
+    aws_api_gateway_integration_response.mock_options_integration_response,
+    aws_api_gateway_method.preferences_api_get_method,
+    aws_api_gateway_integration.preferences_api_get_method_integration,
+    aws_api_gateway_method_response.preferences_api_get_method_response,
+    aws_api_gateway_integration_response.preferences_get_integration_response,
+    aws_api_gateway_method.preferences_api_create_method,
+    aws_api_gateway_integration.preferences_api_create_method_integration,
+    aws_api_gateway_method_response.preferences_api_create_method_response,
+    aws_api_gateway_integration_response.preferences_api_create_integration_response,
+    aws_api_gateway_method.preferences_api_delete_method,
+    aws_api_gateway_integration.preferences_api_delete_method_integration,
+    aws_api_gateway_method_response.preferences_api_delete_method_response,
+    aws_api_gateway_integration_response.preferences_api_delete_integration_response,
+    aws_api_gateway_method.preferences_api_get_all_method,
+    aws_api_gateway_integration.preferences_api_get_all_method_integration,
+    aws_api_gateway_method_response.preferences_api_get_all_method_response,
+    aws_api_gateway_integration_response.preferences_get_all_integration_response,
+    aws_api_gateway_method.get_all_options_method,
+    aws_api_gateway_integration.get_all_options_integration,
+    aws_api_gateway_method_response.get_all_options_response,
+    aws_api_gateway_integration_response.get_all_options_integration_response,
   ]
   rest_api_id = aws_api_gateway_rest_api.web_backend_api.id
   stage_name = var.environment
@@ -439,7 +488,7 @@ resource "aws_api_gateway_deployment" "web_backend_api_deployment" {
 ############################ LAMBDA PERMISSIONS ####################################
 
 resource "aws_lambda_permission" "get-lambda-permission" {
-  statement_id = "AllowWebBackendAPIGatewayInvokeGet"
+  statement_id = "AllowGetComponent"
   action = "lambda:InvokeFunction"
   function_name = var.get_components_lambda_name
   principal = "apigateway.amazonaws.com"
@@ -447,7 +496,7 @@ resource "aws_lambda_permission" "get-lambda-permission" {
 }
 
 resource "aws_lambda_permission" "create-preference-lambda-permission" {
-  statement_id = "AllowWebBackendAPIGatewayInvokeGet"
+  statement_id = "AllowCreatePreference"
   action = "lambda:InvokeFunction"
   function_name = var.create-preference-lambda-name
   principal = "apigateway.amazonaws.com"
@@ -455,7 +504,7 @@ resource "aws_lambda_permission" "create-preference-lambda-permission" {
 }
 
 resource "aws_lambda_permission" "get-preference-lambda-permission" {
-  statement_id = "AllowWebBackendAPIGatewayInvokeGet"
+  statement_id = "AllowGetPreference"
   action = "lambda:InvokeFunction"
   function_name = var.get-preference-lambda-name
   principal = "apigateway.amazonaws.com"
@@ -463,7 +512,7 @@ resource "aws_lambda_permission" "get-preference-lambda-permission" {
 }
 
 resource "aws_lambda_permission" "delete-preference-lambda-permission" {
-  statement_id = "AllowWebBackendAPIGatewayInvokeGet"
+  statement_id = "AllowDeletePreference"
   action = "lambda:InvokeFunction"
   function_name = var.delete-preference-lambda-name
   principal = "apigateway.amazonaws.com"

@@ -80,14 +80,14 @@ resource "aws_route53_record" "web-api" {
   }
 }
 
-resource "aws_route53_record" "auth" {
-  zone_id = var.hosted_zone_id
-  name = local.auth_domain
-  type = "A"
+# resource "aws_route53_record" "auth" {
+#   zone_id = var.hosted_zone_id
+#   name = local.auth_domain
+#   type = "A"
 
-  alias {
-    name = var.cognito_cdn_domain_name
-    zone_id = "Z2FDTNDATAQYW2"
-    evaluate_target_health = true
-  }
-}
+#   alias {
+#     name = var.cognito_cdn_domain_name
+#     zone_id = "Z2FDTNDATAQYW2"
+#     evaluate_target_health = true
+#   }
+# }

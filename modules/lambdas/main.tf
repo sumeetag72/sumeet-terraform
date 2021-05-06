@@ -101,7 +101,7 @@ resource "aws_iam_role_policy_attachment" "delete_preference_exec" {
 }
 
 resource "aws_lambda_function" "RegisterComponentLambda" {
-  filename      = "../../seahorse/server/app.services/target/adminservices-1.0.jar"
+  filename      = "../../seahorse/server/app.services/target/seahorse-services-1.0.jar"
   function_name = var.register-component-lambda-name
   role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
   handler       = "com.globallink.services.components.RegisterComponentService::handleRequest"
@@ -120,7 +120,7 @@ resource "aws_lambda_function" "RegisterComponentLambda" {
 }
 
 resource "aws_lambda_function" "GetRegisteredComponents" {
-  filename      = "../../seahorse/server/app.services/target/adminservices-1.0.jar"
+  filename      = "../../seahorse/server/app.services/target/seahorse-services-1.0.jar"
   function_name = var.get-components-lambda-name
   role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
   handler       = "com.globallink.services.components.GetComponentService::handleRequest"
@@ -139,7 +139,7 @@ resource "aws_lambda_function" "GetRegisteredComponents" {
 }
 
 resource "aws_lambda_function" "DeleteRegisteredComponent" {
-  filename      = "../../seahorse/server/app.services/target/adminservices-1.0.jar"
+  filename      = "../../seahorse/server/app.services/target/seahorse-services-1.0.jar"
   function_name = var.delete-components-lambda-name
   role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
   handler       = "com.globallink.services.components.DeleteComponentService::handleRequest"
@@ -158,7 +158,7 @@ resource "aws_lambda_function" "DeleteRegisteredComponent" {
 }
 
 resource "aws_lambda_function" "CreatePreferenceLambda" {
-  filename      = "../../seahorse/server/app.services/target/adminservices-1.0.jar"
+  filename      = "../../seahorse/server/app.services/target/seahorse-services-1.0.jar"
   function_name = var.create-preference-lambda-name
   role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
   handler       = "com.globallink.services.preference.CreateUserPreferenceService::handleRequest"
@@ -177,7 +177,7 @@ resource "aws_lambda_function" "CreatePreferenceLambda" {
 }
 
 resource "aws_lambda_function" "GetPreferenceLambda" {
-  filename      = "../../seahorse/server/app.services/target/adminservices-1.0.jar"
+  filename      = "../../seahorse/server/app.services/target/seahorse-services-1.0.jar"
   function_name = var.get-preference-lambda-name
   role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
   handler       = "com.globallink.services.preference.GetUserPreferenceService::handleRequest"
@@ -196,7 +196,7 @@ resource "aws_lambda_function" "GetPreferenceLambda" {
 }
 
 resource "aws_lambda_function" "DeletePreferenceLambda" {
-  filename      = "../../seahorse/server/app.services/target/adminservices-1.0.jar"
+  filename      = "../../seahorse/server/app.services/target/seahorse-services-1.0.jar"
   function_name = var.delete-preference-lambda-name
   role          = aws_iam_role.seahorse_iam_role_for_lambdas.arn
   handler       = "com.globallink.services.preference.DeleteUserPreferenceService::handleRequest"
@@ -243,7 +243,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_ping_register_lambda" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.RegisterComponentLambda.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.one_minute_ping.arn
+  source_arn    = aws_cloudwatch_event_rule.app_definition_ping.arn
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_ping_get_lambda" {
@@ -251,7 +251,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_ping_get_lambda" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.GetRegisteredComponents.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.one_minute_ping.arn
+  source_arn    = aws_cloudwatch_event_rule.app_definition_ping.arn
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_ping_delete_lambda" {
@@ -259,7 +259,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_ping_delete_lambda" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.DeleteRegisteredComponent.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.one_minute_ping.arn
+  source_arn    = aws_cloudwatch_event_rule.app_definition_ping.arn
 }
 
 resource "aws_cloudwatch_event_rule" "user_preference_ping" {

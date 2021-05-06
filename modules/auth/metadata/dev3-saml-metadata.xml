@@ -1,23 +1,24 @@
-<EntityDescriptor ID="SM131094aae28f2cb1a18f12be2be05911d7bcdbfd267" entityID="https://my.qa1.globallink.com/glawssh474f5702glqa1" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
-    <IDPSSODescriptor WantAuthnRequestsSigned="false" ID="SMff3f74b5194176228fe2beaf243ad0359308102a4e" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+<EntityDescriptor ID="SM122fc70037041e91f39fc4cbe650b7829f41c11ad94" entityID="https://my.qa3.globallink.com/glawsshdev3qa3" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    <IDPSSODescriptor WantAuthnRequestsSigned="false" ID="SMeb510e885d1bc2bfeb3c5703b0652d9e9ca6a87e" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
         <KeyDescriptor use="signing">
-            <ns1:KeyInfo Id="SM292c09e3a9ad4cbe7ea412aa2140efae34bdd0e88d" xmlns:ns1="http://www.w3.org/2000/09/xmldsig#">
+            <ns1:KeyInfo Id="SM3d82182bb6cc5de4ae1bf07141fb47fa32223739d3" xmlns:ns1="http://www.w3.org/2000/09/xmldsig#">
                 <ns1:X509Data>
                     <ns1:X509IssuerSerial>
-                        <ns1:X509IssuerName>CN=glseahorsessadev1glqa1,OU=SSOProvider,O=Global Link,L=Boston,ST=Massachusetts,C=US</ns1:X509IssuerName>
-                        <ns1:X509SerialNumber>345118500</ns1:X509SerialNumber>
+                        <ns1:X509IssuerName>CN=glawsshdev3qa3,OU=Global Link,O=SSOProvider,L=Boston,ST=Massachusetts,C=US</ns1:X509IssuerName>
+                        <ns1:X509SerialNumber>356182851</ns1:X509SerialNumber>
                     </ns1:X509IssuerSerial>
-                    <ns1:X509Certificate>MIIDhDCCAmygAwIBAgIEFJIXJDANBgkqhkiG9w0BAQsFADCBgzELMAkGA1UEBhMCVVMxFjAUBgNVBAgTDU1hc3NhY2h1c2V0dHMxDzANBgNVBAcTBkJvc3RvbjEUMBIGA1UEChMLR2xvYmFsIExpbmsxFDASBgNVBAsTC1NTT1Byb3ZpZGVyMR8wHQYDVQQDExZnbHNlYWhvcnNlc3NhZGV2MWdscWExMB4XDTIwMTIwODE4MTUwMFoXDTMwMTIwNjE4MTUwMFowgYMxCzAJBgNVBAYTAlVTMRYwFAYDVQQIEw1NYXNzYWNodXNldHRzMQ8wDQYDVQQHEwZCb3N0b24xFDASBgNVBAoTC0dsb2JhbCBMaW5rMRQwEgYDVQQLEwtTU09Qcm92aWRlcjEfMB0GA1UEAxMWZ2xzZWFob3JzZXNzYWRldjFnbHFhMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJzjxYsUpRc/1wnvvaz2yIPMfFHuM5mO5/wSzVHADqUuvAtCr368HAKKWQ5PxZtV+QtVJ4PzmobuNMsj+ED92gqfH5G0QclHx4EPLshI1zUkkYo2lHuFkALE/82FOaQFmcc+TYXrsfdoj0N7VIp3SuXWXjwquH0cMNSOlCUYBZViHe+aFzM9KF//qs0mV5CX+gYLgn7jT3GYymLVEFRNHX3eBSsDS9tmIw7ypQnPgQG7iLwyESlmBD2gnALPUSDpZ/guuxw27AKqiPz3MPffZFOGvyI0zS8eNL3OxbPx1fa4yx+j1gOtO6NiDJj609nO9+4xIdPJZbSrShgeCuGSvK0CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAffbmNfxsOYb6cXQIwLltI23+YuMCge9ad4I+wUizajTywIgTrn7VXeaW3Vwfj1u5L6/9YSWPO+k2xbcV4FS/YZclkNu7hY7eTuB5czJQzZuVrLQkWBnqhfzE4fZmcx522ooGJnWezBJMblO0vCQhVTWb3A3bVUQ2bVe/ymoQf5lqEITfxLBsL+c8Q1E8+jivHqcqHuL/P+McH3odhx1AWpCztU62uOgAau882FrxsvqGvtV/Jc3flNw0ijH35FH2l98lyfj30o2ZLPZlYrYgQt47YfM+GNpMgrKCaiRSyvclm+xL9GE0MNITZGcNvlkd4WvcwTCdhGtogiq5mUx48Q==</ns1:X509Certificate>
-                    <ns1:X509SubjectName>CN=glseahorsessadev1glqa1,OU=SSOProvider,O=Global Link,L=Boston,ST=Massachusetts,C=US</ns1:X509SubjectName>
+                    <ns1:X509Certificate>MIIDcjCCAlqgAwIBAgIEFTrrQzANBgkqhkiG9w0BAQsFADB7MQswCQYDVQQGEwJVUzEWMBQGA1UECBMNTWFzc2FjaHVzZXR0czEPMA0GA1UEBxMGQm9zdG9uMRQwEgYDVQQKEwtTU09Qcm92aWRlcjEUMBIGA1UECxMLR2xvYmFsIExpbmsxFzAVBgNVBAMTDmdsYXdzc2hkZXYzcWEzMB4XDTIxMDQxNTE5NDA1MVoXDTMxMDQxMzE5NDA1MVowezELMAkGA1UEBhMCVVMxFjAUBgNVBAgTDU1hc3NhY2h1c2V0dHMxDzANBgNVBAcTBkJvc3RvbjEUMBIGA1UEChMLU1NPUHJvdmlkZXIxFDASBgNVBAsTC0dsb2JhbCBMaW5rMRcwFQYDVQQDEw5nbGF3c3NoZGV2M3FhMzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANZv1wYixsgqgjOruPIxeCH47YMDX4OXJ1s7nJVcF+Yp9vZFfIC5BaJk2BxDx+nj3GNLYrmaZkMARssUGjrM/uAHHZp5QjDA1bBDcv0aiMDXxX64ffRwoWzELfRgwUYkj8d6UUi3Psz34WCgEGtIcX0mEq3tjSHMrCKVQH5zEK++6N+Pj5fWGCz6uSsq3kLYh8FZD2Ct/eyVB+Pfl0sJMdb9z/jBYj3uB5yWW2HDXr3zzwto+dRdo2YmiHPxTYB8M/P2l1LNpHEAVLShhWdW+pDTSuzpC673cpZCClxfJP5s6OHi7l3tZp5novZSzthO/E9XTOjGlfpDdG9qwtLBjFECAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAmuAt8TBIXivtuXwfDsc0pD2g+wtmgzp6xjBhGHEijgeZ1Bmd76Omo760klIHn7mO1h59LPxaRnP+OW2TVhZH8tCxr3vYZ7plQssI1T944RSHkvROh3/PL+yes4rWKN0iL5aSR7r1alfeSy7uMJiODGdqh+yhfCzKhGh54lWWxvL+AuqSEL1P24z1Pp38OY97iH2XUXoCvvfFbbb5ECFBxPeKUlJPb9lrHdT9yC+6dlEmINoZHG/I44lf7Ytf4RdyU1M6CaFIiTf7YqBgxBhcgVMSiDyH9mdYw2qtyL4T3L2hmilKGv5EIx1ZgoExaKUEEkGnZremDdORSpLXXjNH7Q==</ns1:X509Certificate>
+                    <ns1:X509SubjectName>CN=glawsshdev3qa3,OU=Global Link,O=SSOProvider,L=Boston,ST=Massachusetts,C=US</ns1:X509SubjectName>
                 </ns1:X509Data>
             </ns1:KeyInfo>
         </KeyDescriptor>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
-        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://my.qa1.globallink.com/affwebservices/public/saml2sso?SPID=https://gl-seahorse.auth.us-east-1.amazoncognito.com"/>
-        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://my.qa1.globallink.com/affwebservices/public/saml2sso?SPID=https://gl-seahorse.auth.us-east-1.amazoncognito.com"/>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://my.qa3.globallink.com/affwebservices/public/saml2sso"/>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://my.qa3.globallink.com/affwebservices/public/saml2sso"/>
         <ns2:Attribute Name="givenname" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified" xmlns:ns2="urn:oasis:names:tc:SAML:2.0:assertion"/>
         <ns3:Attribute Name="surname" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified" xmlns:ns3="urn:oasis:names:tc:SAML:2.0:assertion"/>
         <ns4:Attribute Name="emailaddress" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified" xmlns:ns4="urn:oasis:names:tc:SAML:2.0:assertion"/>
         <ns5:Attribute Name="name" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified" xmlns:ns5="urn:oasis:names:tc:SAML:2.0:assertion"/>
+        <ns6:Attribute Name="glauth" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified" xmlns:ns6="urn:oasis:names:tc:SAML:2.0:assertion"/>
     </IDPSSODescriptor>
 </EntityDescriptor>
