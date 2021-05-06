@@ -49,6 +49,9 @@ module "admin_lambdas" {
   register-component-lambda-name = var.register_component_lambda_name
   get-components-lambda-name = var.get_components_lambda_name
   delete-components-lambda-name = var.delete_component_lambda_name
+  create-preference-lambda-name = var.create_preference_lambda_name
+  get-preference-lambda-name = var.get_preference_lambda_name
+  delete-preference-lambda-name = var.delete_preference_lambda_name
   environment = var.environment
   aws_account_id = var.aws_account_id
 }
@@ -75,35 +78,22 @@ module "web_admin_api" {
   domain_name = var.domain_name
   acm_certificate_arn = module.acm.acm_certificate_arn
   depends_on = [
-    module.admin_lambdas, module.auth
+    module.admin_lambdas
   ]
 }
 
-module "web_backend_api_with_existing_cognito" {
-  count   = var.deploy_auth ? 0 : 1
+module "web_backend_api" {
   source = "../modules/web-backend-api"
   aws_account_id = var.aws_account_id
   region = var.region
   environment = var.environment
   get_components_lambda_name = var.get_components_lambda_name
+  create-preference-lambda-name = var.create_preference_lambda_name
+  get-preference-lambda-name = var.get_preference_lambda_name
+  delete-preference-lambda-name = var.delete_preference_lambda_name
   user_pool_arn = var.user_pool_arn
   domain_name = var.domain_name
-  acm_certificate_arn = module.acm.acm_certificate_arn
-  depends_on = [
-    module.admin_lambdas, module.auth
-  ]
-}
-
-module "web_backend_api_with_fresh_auth_setup" {
-
-  source = "../modules/web-backend-api"
-  aws_account_id = var.aws_account_id
-  region = var.region
-  environment = var.environment
-  get_components_lambda_name = var.get_components_lambda_name
-  user_pool_arn = module.auth.user_pool_arn
-  domain_name = var.domain_name
-  acm_certificate_arn = module.acm.acm_certificate_arn
+  acm_certificate_arn = var.deploy_auth ? module.acm.acm_certificate_arn : var.acm_certificate_arn
   depends_on = [
     module.admin_lambdas, module.auth
   ]
@@ -118,12 +108,12 @@ module "route53_setup" {
   storybook_cdn_domain_name = module.web_static.storybook_cdn_domain_name
   docusaurus_cdn_domain_name = module.web_static.docusaurus_cdn_domain_name
   example_cdn_domain_name = module.web_static.example_cdn_domain_name
-  web_api_zone_id = module.web_backend_api_with_fresh_auth_setup.zone_id
-  web_api_cdn_domain_name = module.web_backend_api_with_fresh_auth_setup.domain_name
-  admin_api_zone_id = module.web_admin_api.zone_id
-  admin_api_cdn_domain_name = module.web_admin_api.domain_name
-  cognito_cdn_domain_name = module.auth.domain_name[0]
+  web_api_zone_id = var.deploy_auth ? module.web_backend_api.zone_id : var.web_api_zone_id
+  web_api_cdn_domain_name = var.deploy_auth ? module.web_backend_api.domain_name : var.web_api_domain_name
+  admin_api_zone_id = var.deploy_auth ? module.web_admin_api.zone_id : var.admin_api_zone_id
+  admin_api_cdn_domain_name = var.deploy_auth ? module.web_admin_api.domain_name : var.admin_api_domain_name
+  cognito_cdn_domain_name = var.deploy_auth ? module.auth.domain_name[0] : var.auth_domain_name
   depends_on = [
-    module.auth, module.web_admin_api, module.admin_lambdas, module.web_static
+    module.web_admin_api, module.admin_lambdas, module.web_static
   ]
 }
