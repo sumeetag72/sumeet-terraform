@@ -33,7 +33,6 @@ variable "user_preferences_table_name" {
   default = null
 }
 
-
 variable "register_component_lambda_name" {
   type    = string
   default = null
@@ -99,4 +98,52 @@ variable "configure_route53" {
   description = "If set to true, route 53 mappings will be created"
   type        = bool
   default     = false
+}
+
+variable "auth_domain_name" {
+  description = "cognito domaim name"
+  type        = string
+  default     = null
+}
+
+variable "web_api_zone_id" {
+  description = "web api zone id"
+  type        = string
+  default     = null
+}
+
+variable "web_api_domain_name" {
+  description = "web api domain name"
+  type        = string
+  default     = null
+}
+
+variable "admin_api_zone_id" {
+  description = "admin api zone id"
+  type        = string
+  default     = null
+}
+
+variable "admin_api_domain_name" {
+  description = "admin api domain name"
+  type        = string
+  default     = null
+}
+
+variable "create_preference_lambda_name" {
+  description = "create user preference lambda name"
+  type        = string
+  default     = null
+}
+
+variable "get_preference_lambda_name" {
+  description = "get user preference lambda name"
+  type        = string
+  default     = null
+}
+
+variable "delete_preference_lambda_name" {
+  description = "delete user preference lambda name"
+  type        = string
+  default     = null
 }
