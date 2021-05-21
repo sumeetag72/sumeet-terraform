@@ -25,7 +25,7 @@ resource "aws_api_gateway_method" "admin_api_register_method" {
   rest_api_id = aws_api_gateway_rest_api.admin_api.id
   resource_id = aws_api_gateway_resource.admin_api_resource.id
   http_method = "POST"
-  authorization = "NONE"
+  authorization = "AWS_IAM"
   request_parameters = {
     "method.request.header.Content-Type" = true
   }
@@ -71,7 +71,7 @@ resource "aws_api_gateway_method" "admin_api_get_method" {
   rest_api_id = aws_api_gateway_rest_api.admin_api.id
   resource_id = aws_api_gateway_resource.admin_api_resource.id
   http_method = "GET"
-  authorization = "NONE"
+  authorization = "AWS_IAM"
   request_parameters = {
     "method.request.header.Content-Type" = true
   }
@@ -120,7 +120,7 @@ resource "aws_api_gateway_method" "admin_api_delete_method" {
   rest_api_id = aws_api_gateway_rest_api.admin_api.id
   resource_id = aws_api_gateway_resource.admin_api_resource.id
   http_method = "DELETE"
-  authorization = "NONE"
+  authorization = "AWS_IAM"
   request_parameters = {
     "method.request.header.Content-Type" = true
   }
