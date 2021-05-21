@@ -82,6 +82,17 @@ module "web_admin_api" {
   ]
 }
 
+module "iam_group_and_policies" {
+  source = "../modules/iam"
+  aws_account_id = var.aws_account_id
+  admin_api_id = var.deploy_auth ? module.web_admin_api.deploy_auth : var.admin_api_id
+  seahorse_admin_group_id=var.seahorse_admin_group_id
+  ssa_group_id = var.ssa_group_id
+  bestx_group_id=var.bestx_group_id
+  tradenexus_group_id=var.tradenexus_group_id
+  fxconnect_group_id=var.fxconnect_group_id
+}
+
 module "web_backend_api" {
   source = "../modules/web-backend-api"
   aws_account_id = var.aws_account_id
