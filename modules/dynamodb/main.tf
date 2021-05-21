@@ -24,16 +24,16 @@ resource "aws_dynamodb_table" "user-preferences-table" {
   billing_mode   = "PROVISIONED"
   read_capacity  = 50
   write_capacity = 50
-  hash_key       = "USER_ID"
-  range_key       = "PREFERENCE_ID"
+  hash_key       = "user_id"
+  range_key       = "preference_id"
   
   attribute {
-    name = "USER_ID"
+    name = "user_id"
     type = "S"
   }
 
   attribute {
-    name = "PREFERENCE_ID"
+    name = "preference_id"
     type = "S"
   }
 
