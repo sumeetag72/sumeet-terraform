@@ -147,3 +147,85 @@ variable "delete_preference_lambda_name" {
   type        = string
   default     = null
 }
+
+variable "idp-name" {
+  type    = string
+  default = null
+}
+
+variable "user-pool-client-redirect-urls" {
+  type    = list(string)
+}
+
+variable "user-pool-client-logout-urls" {
+  type    = list(string)
+}
+
+variable "deploy_auth" {
+  description = "If set to true, cognito auth will be configured"
+  type        = bool
+  default     = false
+}
+
+variable "user_pool_arn" {
+  description = "needed when deploy auth is disabled"
+  type        = string
+  default = null
+}
+
+variable "whitelisted_ips" {
+  description = "needed when deploy auth is disabled"
+  type        = list
+  default = null
+}
+
+variable "domain_name" {
+  type    = string
+  default = null
+}
+
+variable "acm_certificate_arn" {
+  type    = string
+  default = null
+}
+
+variable "hosted_zone_id" {
+  type    = string
+  default = null
+}
+
+variable "configure_route53" {
+  description = "If set to true, route 53 mappings will be created"
+  type        = bool
+  default     = false
+}
+
+variable "admin_api_id" {
+  type    = string
+  default = null
+}
+
+variable "seahorse_admin_group_id" {
+  type    = string
+  default = null
+}
+
+variable "ssa_group_id" {
+  type    = string
+  default = null
+}
+
+variable "bestx_group_id" {
+  type    = string
+  default = null
+}
+
+variable "tradenexus_group_id" {
+  type    = string
+  default = null
+}
+
+variable "fxconnect_group_id" {
+  type    = string
+  default = null
+}
