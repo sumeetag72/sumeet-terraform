@@ -32,8 +32,3 @@ variable "fxconnect_group_id" {
   type    = string
   default = null
 }
-
-variable "acm_certificate_arn" {
-  type    = string
-  default = null
-}
