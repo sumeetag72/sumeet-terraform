@@ -131,8 +131,8 @@ resource "aws_cloudfront_distribution" "docs_distribution" {
 
     viewer_protocol_policy = "allow-all"
     min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
+    default_ttl            = 0
+    max_ttl                = 0
   }
 
   restrictions {
@@ -205,8 +205,8 @@ resource "aws_cloudfront_distribution" "storybook_distribution" {
 
     viewer_protocol_policy = "allow-all"
     min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
+    default_ttl            = 0
+    max_ttl                = 0
   }
 
   restrictions {
@@ -278,8 +278,8 @@ resource "aws_cloudfront_distribution" "example_distribution" {
 
     viewer_protocol_policy = "allow-all"
     min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
+    default_ttl            = 0
+    max_ttl                = 0
   }
 
   restrictions {
