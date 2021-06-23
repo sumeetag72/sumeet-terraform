@@ -18,7 +18,7 @@
                 "execute-api:Invoke"
             ],
             "Resource": [
-                "arn:aws:execute-api:us-east-1:276164198880:olf4b7brbf/*/*/apps/group"
+                "arn:aws:execute-api:us-east-1:${aws_account_id}:${admin_api_id}/*/*/apps/group"
             ]
         }
     ]
