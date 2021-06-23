@@ -32,3 +32,46 @@ tradenexus_group_id="tradenexus"
 fxconnect_group_id="fxconnect"
 configure_route53 = false
 deploy_auth = false
+ocs-user-pool-client-redirect-urls =["https://storybook.seahorse-dev2.globallink.com,https://docusaurus.seahorse-dev2.globallink.com"]
+docs-user-pool-client-logout-urls   =["https://storybook.seahorse-dev2.globallink.com,https://docusaurus.seahorse-dev2.globallink.com"]
+docs_auth_domain="docs-seahorse-dev2"
+login-css=<<EOT
+.background-customizable {
+    background-color: #EBEBEB;
+}
+.banner-customizable {
+  background-color: #FFF;
+}
+.errorMessage-customizable {
+  border: 1px solid #FF5A5A;
+}
+.idpButton-customizable {
+  background-color: #0166B9;
+  color: #FFFFFF;
+  border-color: transparent;
+}
+.idpButton-customizable:hover {
+  background-color: #013E7D;
+  color: #FFFFFF;
+}
+.inputField-customizable {
+  color: #333333;
+  background-color: #ECECEC;
+  border: 1px solid #5F5F5F;
+}
+.inputField-customizable:focus {
+  border: 1px solid #A2C0D8;
+}
+.legalText-customizable {
+  color: #5F5F5F;
+}
+.submitButton-customizable {
+  background-color: #0166B9;
+  color: #FFFFFF;
+  height: 36px;
+}
+.submitButton-customizable:hover {
+  background-color: #013E7D;
+  color: #FFFFFF;
+} 
+EOT
