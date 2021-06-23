@@ -177,3 +177,20 @@ variable "fxconnect_group_id" {
   type    = string
   default = null
 }
+
+variable "docs-user-pool-client-redirect-urls" {
+  type    = list(string)
+}
+
+variable "docs-user-pool-client-logout-urls" {
+  type    = list(string)
+}
+
+variable "login-css" {
+  type    = string
+  default = null
+}
+
+variable "docs_auth_domain" {
+  type    = string
+}

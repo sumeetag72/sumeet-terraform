@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.20.0"
+      version = "~> 3.30.0"
     }
   }
 }
@@ -65,6 +65,14 @@ module "auth" {
   deploy_auth   = var.deploy_auth
   domain_name = var.domain_name
   acm_certificate_arn = module.acm.acm_certificate_arn
+}
+
+module "docu-auth" {
+  source = "../modules/docu-auth"
+  docs-user-pool-client-redirect-urls = var.docs-user-pool-client-redirect-urls
+  docs-user-pool-client-logout-urls = var.docs-user-pool-client-logout-urls
+  login-css = var.login-css
+  docs_auth_domain = var.docs_auth_domain
 }
 
 module "web_admin_api" {
