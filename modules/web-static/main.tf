@@ -3,6 +3,7 @@ locals {
   storybook_bucket_name  = format("%s.%s.storybook", var.environment, var.project)
   finsemble_bucket_name  = format("%s.%s.finsemble", var.environment, var.project)
   example_bucket_name  = format("%s.%s.simple-app", var.environment, var.project)
+  apps_bucket_name  = format("%s.%s.apps", var.environment, var.project)
 }
 
 resource "aws_cloudfront_origin_access_identity" "finsemble_origin_access_identity" {
@@ -28,10 +29,39 @@ resource "aws_s3_bucket" "finsemble" {
   }
 }
 
+resource "aws_s3_bucket" "apps" {
+  bucket = local.apps_bucket_name
+  acl    = "public-read"
+  policy = templatefile("${path.module}/policy/s3-buckets-policy.tpl", {
+    bucket_name = local.apps_bucket_name
+    cdn_iam_arn = aws_cloudfront_origin_access_identity.finsemble_origin_access_identity.iam_arn
+  })
+
+  tags = {
+    Name        = "Product"
+    Environment = "SeaHorse"
+  }
+
+  website {
+    index_document = "index.html"
+    error_document = "error.html"
+  }
+}
+
+
+
 resource "aws_cloudfront_distribution" "finsemble_distribution" {
   origin {
     domain_name = aws_s3_bucket.finsemble.bucket_regional_domain_name
     origin_id   = local.finsemble_bucket_name
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.finsemble_origin_access_identity.cloudfront_access_identity_path
+    }
+  }
+
+  origin {
+    domain_name = aws_s3_bucket.apps.bucket_regional_domain_name
+    origin_id   = local.apps_bucket_name
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.finsemble_origin_access_identity.cloudfront_access_identity_path
     }
@@ -60,6 +90,27 @@ resource "aws_cloudfront_distribution" "finsemble_distribution" {
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 10800
+  }
+
+  ordered_cache_behavior {
+    path_pattern     = "/apps/*"
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = local.apps_bucket_name
+
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
+    }
+
+    min_ttl                = 0
+    default_ttl            = 0
+    max_ttl                = 0
+    compress               = true
+    viewer_protocol_policy = "redirect-to-https"
   }
 
   restrictions {
@@ -250,7 +301,7 @@ resource "aws_s3_bucket" "examples" {
 
 resource "aws_cloudfront_distribution" "example_distribution" {
   origin {
-    domain_name = aws_s3_bucket.finsemble.bucket_regional_domain_name
+    domain_name = aws_s3_bucket.examples.bucket_regional_domain_name
     origin_id   = local.example_bucket_name
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.example_origin_access_identity.cloudfront_access_identity_path
