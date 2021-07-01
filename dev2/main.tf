@@ -102,7 +102,7 @@ module "web_backend_api" {
   create-preference-lambda-name = var.create_preference_lambda_name
   get-preference-lambda-name = var.get_preference_lambda_name
   delete-preference-lambda-name = var.delete_preference_lambda_name
-  user_pool_arn = var.user_pool_arn
+    user_pool_arn = var.deploy_auth ? module.auth.user_pool_arn : var.user_pool_arn
   domain_name = var.domain_name
   acm_certificate_arn = var.deploy_auth ? module.acm.acm_certificate_arn : var.acm_certificate_arn
   depends_on = [
