@@ -1,9 +1,5 @@
 resource "aws_api_gateway_rest_api" "admin_api" {
   name = "seahorse-admin-api"
-
-  endpoint_configuration {
-    types = ["REGIONAL"]
-  }
 }
 
 resource "aws_api_gateway_resource" "admin_api_resource" {

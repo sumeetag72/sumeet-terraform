@@ -1,9 +1,5 @@
 resource "aws_api_gateway_rest_api" "web_backend_api" {
   name = "seahorse-web-backend-api"
-
-  endpoint_configuration {
-    types = ["REGIONAL"]
-  }
 }
 
 resource "aws_api_gateway_authorizer" "web_authorizer" {
