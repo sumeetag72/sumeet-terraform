@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.20.0"
+      version = "~> 3.30.0"
     }
   }
 }
@@ -97,7 +97,7 @@ module "web_backend_api_with_existing_cognito" {
   region = var.region
   environment = var.environment
   get_components_lambda_name = var.get_components_lambda_name
-  user_pool_arn = var.user_pool_arn
+  user_pool_arn = var.deploy_auth ? module.auth.user_pool_arn : var.user_pool_arn
   domain_name = var.domain_name
   acm_certificate_arn = module.acm.acm_certificate_arn
   depends_on = [

@@ -88,8 +88,8 @@ resource "aws_cloudfront_distribution" "finsemble_distribution" {
 
     viewer_protocol_policy = "allow-all"
     min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 10800
+    default_ttl            = 0
+    max_ttl                = 0
   }
 
   ordered_cache_behavior {

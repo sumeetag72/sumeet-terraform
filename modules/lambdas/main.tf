@@ -119,6 +119,19 @@ resource "aws_lambda_function" "RegisterComponentLambda" {
   }
 }
 
+resource "aws_lambda_alias" "RegisterComponentLambda" {
+  name             = "RegisterComponentLambda"
+  description      = "RegisterComponentLambda"
+  function_name    = aws_lambda_function.RegisterComponentLambda.arn
+  function_version = "$LATEST"
+}
+
+resource "aws_lambda_provisioned_concurrency_config" "RegisterComponentLambda" {
+  function_name                     = aws_lambda_function.RegisterComponentLambda.function_name
+  provisioned_concurrent_executions = 3
+  qualifier                         = aws_lambda_function.RegisterComponentLambda.version
+}
+
 resource "aws_lambda_function" "GetRegisteredComponents" {
   filename      = "../../seahorse/server/app.services/target/seahorse-services-1.0.jar"
   function_name = var.get-components-lambda-name
@@ -136,6 +149,19 @@ resource "aws_lambda_function" "GetRegisteredComponents" {
       environment = var.environment
     }
   }
+}
+
+resource "aws_lambda_alias" "GetRegisteredComponents" {
+  name             = "GetRegisteredComponents"
+  description      = "GetRegisteredComponents"
+  function_name    = aws_lambda_function.GetRegisteredComponents.arn
+  function_version = "$LATEST"
+}
+
+resource "aws_lambda_provisioned_concurrency_config" "GetRegisteredComponents" {
+  function_name                     = aws_lambda_function.GetRegisteredComponents.function_name
+  provisioned_concurrent_executions = 15
+  qualifier                         = aws_lambda_function.GetRegisteredComponents.version
 }
 
 resource "aws_lambda_function" "DeleteRegisteredComponent" {
@@ -157,6 +183,19 @@ resource "aws_lambda_function" "DeleteRegisteredComponent" {
   }
 }
 
+resource "aws_lambda_alias" "DeleteRegisteredComponent" {
+  name             = "DeleteRegisteredComponent"
+  description      = "DeleteRegisteredComponent"
+  function_name    = aws_lambda_function.DeleteRegisteredComponent.arn
+  function_version = "$LATEST"
+}
+
+resource "aws_lambda_provisioned_concurrency_config" "DeleteRegisteredComponent" {
+  function_name                     = aws_lambda_function.DeleteRegisteredComponent.function_name
+  provisioned_concurrent_executions = 3
+  qualifier                         = aws_lambda_function.DeleteRegisteredComponent.version
+}
+
 resource "aws_lambda_function" "CreatePreferenceLambda" {
   filename      = "../../seahorse/server/app.services/target/seahorse-services-1.0.jar"
   function_name = var.create-preference-lambda-name
@@ -174,6 +213,19 @@ resource "aws_lambda_function" "CreatePreferenceLambda" {
       environment = var.environment
     }
   }
+}
+
+resource "aws_lambda_alias" "CreatePreferenceLambda" {
+  name             = "CreatePreferenceLambda"
+  description      = "CreatePreferenceLambda"
+  function_name    = aws_lambda_function.CreatePreferenceLambda.arn
+  function_version = "$LATEST"
+}
+
+resource "aws_lambda_provisioned_concurrency_config" "CreatePreferenceLambda" {
+  function_name                     = aws_lambda_function.CreatePreferenceLambda.function_name
+  provisioned_concurrent_executions = 15
+  qualifier                         = aws_lambda_function.CreatePreferenceLambda.version
 }
 
 resource "aws_lambda_function" "GetPreferenceLambda" {
@@ -195,6 +247,19 @@ resource "aws_lambda_function" "GetPreferenceLambda" {
   }
 }
 
+resource "aws_lambda_alias" "GetPreferenceLambda" {
+  name             = "GetPreferenceLambda"
+  description      = "GetPreferenceLambda"
+  function_name    = aws_lambda_function.GetPreferenceLambda.arn
+  function_version = "$LATEST"
+}
+
+resource "aws_lambda_provisioned_concurrency_config" "GetPreferenceLambda" {
+  function_name                     = aws_lambda_function.GetPreferenceLambda.function_name
+  provisioned_concurrent_executions = 15
+  qualifier                         = aws_lambda_function.GetPreferenceLambda.version
+}
+
 resource "aws_lambda_function" "DeletePreferenceLambda" {
   filename      = "../../seahorse/server/app.services/target/seahorse-services-1.0.jar"
   function_name = var.delete-preference-lambda-name
@@ -212,6 +277,19 @@ resource "aws_lambda_function" "DeletePreferenceLambda" {
       environment = var.environment
     }
   }
+}
+
+resource "aws_lambda_alias" "DeletePreferenceLambda" {
+  name             = "DeletePreferenceLambda"
+  description      = "DeletePreferenceLambda"
+  function_name    = aws_lambda_function.DeletePreferenceLambda.arn
+  function_version = "$LATEST"
+}
+
+resource "aws_lambda_provisioned_concurrency_config" "DeletePreferenceLambda" {
+  function_name                     = aws_lambda_function.DeletePreferenceLambda.function_name
+  provisioned_concurrent_executions = 15
+  qualifier                         = aws_lambda_function.DeletePreferenceLambda.version
 }
 
 resource "aws_cloudwatch_event_rule" "app_definition_ping" {
