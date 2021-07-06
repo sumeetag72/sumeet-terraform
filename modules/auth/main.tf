@@ -24,6 +24,14 @@ resource "aws_cognito_user_pool_client" "seahorse_web_client" {
   explicit_auth_flows = ["ADMIN_NO_SRP_AUTH"]
   allowed_oauth_flows_user_pool_client = true
   supported_identity_providers = ["COGNITO",var.idp-name]
+  access_token_validity                = 720
+  id_token_validity                    = 720
+  refresh_token_validity               = 721
+  token_validity_units = {
+    access_token  = "minutes"
+    id_token      = "minutes"
+    refresh_token = "minutes"
+  }
   callback_urls = var.user-pool-client-redirect-urls
   logout_urls = var.user-pool-client-logout-urls
   depends_on = [
