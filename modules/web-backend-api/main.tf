@@ -155,6 +155,7 @@ resource "aws_api_gateway_method" "preferences_api_get_all_method" {
   http_method = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.web_authorizer.id
+  authorization_scopes = ["profile", "email"]
   request_parameters = {
     "method.request.header.Content-Type" = true
   }
@@ -238,7 +239,7 @@ resource "aws_api_gateway_integration_response" "get_all_options_integration_res
   status_code = 200
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'", # replace with hostname of frontend (CloudFront)
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-User-Profile'",
     "method.response.header.Access-Control-Allow-Methods" = "'GET, OPTIONS, POST'" # remove or add HTTP methods as needed
   }
 }
@@ -258,6 +259,7 @@ resource "aws_api_gateway_method" "preferences_api_get_method" {
   http_method = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.web_authorizer.id
+  authorization_scopes = ["profile", "email"]
   request_parameters = {
     "method.request.header.Content-Type" = true
   }
@@ -306,6 +308,7 @@ resource "aws_api_gateway_method" "preferences_api_create_method" {
   http_method = "POST"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.web_authorizer.id
+  authorization_scopes = ["profile", "email"]
   request_parameters = {
     "method.request.header.Content-Type" = true
   }
@@ -352,6 +355,7 @@ resource "aws_api_gateway_method" "preferences_api_delete_method" {
   http_method = "DELETE"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.web_authorizer.id
+  authorization_scopes = ["profile", "email"]
   request_parameters = {
     "method.request.header.Content-Type" = true
   }
@@ -435,7 +439,7 @@ resource "aws_api_gateway_integration_response" "get_options_integration_respons
   status_code = 200
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'", # replace with hostname of frontend (CloudFront)
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-User-Profile'",
     "method.response.header.Access-Control-Allow-Methods" = "'GET, OPTIONS, POST,DELETE'" # remove or add HTTP methods as needed
   }
 }
