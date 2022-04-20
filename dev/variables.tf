@@ -89,6 +89,8 @@ variable "acm_certificate_arn" {
   default = null
 }
 
+##
+
 variable "hosted_zone_id" {
   type    = string
   default = null
