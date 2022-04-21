@@ -57,7 +57,7 @@ module "admin_lambdas" {
 }
 
 
-## Sumeet is testing 
+## Sumeet 
 
 module "auth" {
   source = "../modules/auth"
